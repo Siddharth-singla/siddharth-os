@@ -88,6 +88,7 @@ export default function Hero({ booted }) {
               animate={booted ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease: EASE }}
               className="font-monoos text-[10px] sm:text-xs tracking-[0.35em] text-osc"
+              data-particle-avoid
             >
               // SYSTEM ONLINE — WELCOME, VISITOR
             </motion.p>
@@ -95,6 +96,7 @@ export default function Hero({ booted }) {
             <motion.div
               style={{ rotateX: srx, rotateY: sry, transformPerspective: 1200 }}
               className="mt-5 overflow-hidden"
+              data-particle-avoid
             >
               <motion.h1
                 initial={{ y: "112%" }}
@@ -114,8 +116,9 @@ export default function Hero({ booted }) {
           {/* 2. the photo, centred below the name; grain-disintegrates on scroll */}
           <motion.div
             style={{ x: smx, y: smy }}
-            className="mt-8 sm:mt-10 shrink-0 w-[64vw] max-w-[280px] sm:w-[300px] sm:max-w-none lg:w-[340px] aspect-square"
+            className="mt-6 sm:mt-8 shrink-0 w-[90vw] max-w-[440px] sm:w-[min(72vw,60vh)] sm:max-w-none lg:w-[clamp(400px,66vh,640px)] aspect-square"
             data-testid="hero-photo"
+            data-particle-avoid
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -135,6 +138,7 @@ export default function Hero({ booted }) {
               transition={{ duration: 0.6, delay: 0.9 }}
               className="mt-8 font-monoos text-sm sm:text-base text-dim"
               data-testid="hero-human-exe-line"
+              data-particle-avoid
             >
               <span className="text-osc">&gt; </span>
               <TypeLine text="human.exe is currently running" started={booted} delay={1100} />
@@ -145,6 +149,8 @@ export default function Hero({ booted }) {
               animate={booted ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, ease: EASE, delay: 1.25 }}
               className="mt-10"
+              data-testid="hero-tagline"
+              data-particle-avoid
             >
               <p className="font-serif-human italic text-2xl sm:text-3xl lg:text-4xl leading-snug text-ink/90">
                 A human running on curiosity.
@@ -160,7 +166,7 @@ export default function Hero({ booted }) {
               transition={{ duration: 0.8, ease: EASE, delay: 1.4 }}
               className="mt-12 w-full max-w-md text-left"
             >
-              <div className="border border-ink/10 bg-panel/70 backdrop-blur-sm" data-testid="hero-process-panel">
+              <div className="border border-ink/10 bg-panel/70 backdrop-blur-sm" data-testid="hero-process-panel" data-particle-avoid>
                 <div className="flex items-center justify-between border-b border-ink/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-faint">
                   <span>TASKLIST</span>
                   <span>6 PROCESSES</span>
@@ -194,6 +200,7 @@ export default function Hero({ booted }) {
               transition={{ delay: 2.2, duration: 0.8 }}
               className="mt-14 flex flex-col items-center gap-3"
               data-testid="hero-scroll-cue"
+              data-particle-avoid
             >
               <span className="font-monoos text-[10px] tracking-[0.35em] text-faint">
                 SCROLL TO ENTER THE SYSTEM
