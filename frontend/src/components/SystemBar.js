@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { useOS } from "../os/context";
 import { CHAPTERS } from "../data/content";
-import { tick } from "../lib/audio";
+import { tick, worldNote } from "../lib/audio";
 
 export default function SystemBar() {
-  const { muted, toggleMute, listening, startListening } = useOS();
+  const { muted, toggleMute, listening, startListening, operator } = useOS();
   const [time, setTime] = useState("--:--:--");
   const [chapter, setChapter] = useState("");
+  const lastNote = useRef({ id: "", at: 0 });
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26 });
 
@@ -22,11 +23,21 @@ export default function SystemBar() {
   useEffect(() => {
     const onScroll = () => {
       let cur = "";
+      let curId = "";
       for (const c of CHAPTERS) {
         const el = document.getElementById(c.id);
-        if (el && el.getBoundingClientRect().top <= 90) cur = c.label;
+        if (el && el.getBoundingClientRect().top <= 90) {
+          cur = c.label;
+          curId = c.id;
+        }
       }
       setChapter(cur);
+      // Each world has its own note in the same key; scrolling through plays a melody.
+      const now = Date.now();
+      if (curId && curId !== lastNote.current.id && now - lastNote.current.at > 380) {
+        if (lastNote.current.id) worldNote(curId);
+        lastNote.current = { id: curId, at: now };
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -38,10 +49,10 @@ export default function SystemBar() {
       <div className="backdrop-blur-md bg-void/70 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 flex items-center justify-between font-monoos text-[11px] tracking-[0.2em]">
           <div className="flex items-center gap-3">
-            <img src="/favicon.svg" className="h-5 w-5" alt="SIDDHARTH.OS mark" />
+            <img src={`${process.env.PUBLIC_URL}/favicon.svg`} className="h-5 w-5" alt="SIDDHARTH.OS mark" />
             <span className="text-ink font-bold">SIDDHARTH.OS</span>
             <span className="hidden sm:inline text-osc" data-testid="system-online-badge">
-              ● ONLINE
+              ● {operator ? "OPERATOR" : "ONLINE"}
             </span>
           </div>
           <div className="hidden lg:flex items-center gap-5 text-dim">
@@ -51,8 +62,9 @@ export default function SystemBar() {
           <div className="flex items-center gap-2">
             <button
               data-testid="mic-toggle-button"
-              onClick={startListening}
+              onClick={() => startListening()}
               onMouseEnter={() => tick()}
+              aria-label={listening ? "Stop listening" : "Speak a command"}
               className={`flex items-center gap-2 border px-3 py-1.5 transition-colors duration-300 ${
                 listening
                   ? "border-osc bg-osc/15 text-osc"

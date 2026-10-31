@@ -14,7 +14,7 @@ export default function Mind() {
         <div className="flex flex-col gap-10" data-testid="mind-links">
           {MIND_LINKS.map((link, li) => (
             <motion.div
-              key={link[0]}
+              key={link.join("→")}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
@@ -22,7 +22,7 @@ export default function Mind() {
               onMouseEnter={() => tick()}
               onClick={() => blip()}
               className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 border border-white/10 bg-panel/40 p-5 sm:p-6 hover:border-osc/40 transition-colors duration-300"
-              data-testid={`mind-link-${link[0].toLowerCase()}`}
+              data-testid={`mind-link-${link.join("-").toLowerCase().replace(/[^a-z]+/g, "-")}`}
             >
               {link.map((node, ni) => (
                 <div key={node} className="flex items-center gap-3 sm:flex-1">

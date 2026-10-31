@@ -1,10 +1,14 @@
 import { useEffect, useRef } from "react";
 import { motion, useMotionValueEvent, useReducedMotion, useTransform } from "framer-motion";
-import avatarSrc from "../assets/avatar.jpg";
+// background removed (BiRefNet portrait model); only Siddharth remains, on a transparent PNG
+import avatarSrc from "../assets/avatar-cutout.png";
 
-// soft elliptical mask so the photo's black background dissolves into the page
-const MASK =
-  "radial-gradient(ellipse 80% 80% at 50% 50%, black 58%, rgba(0,0,0,0.55) 78%, transparent 97%)";
+// the photo cuts off his shoulders at the bottom and right edges; an oval centred on the head
+// keeps all the hair and fades the shoulders out, so no straight edge is ever visible
+const MASK = "radial-gradient(ellipse 62% 70% at 50% 30%, black 62%, transparent 100%)";
+// the green outline: drop-shadow follows the cut-out's edge, so it traces his hair and shoulders
+const OUTLINE =
+  "drop-shadow(0 0 1px rgba(34,197,94,0.95)) drop-shadow(0 0 3px rgba(34,197,94,0.55)) drop-shadow(0 0 18px rgba(34,197,94,0.28))";
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
@@ -47,8 +51,7 @@ export default function AvatarGrain({ progress, booted }) {
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-            const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            if (lum < 16) continue; // drop the black backdrop, keep subject + green rim
+            if (data[i + 3] < 110) continue; // transparent background: no grain there
             const hx = x / SW;
             const hy = y / SW;
             const ang = Math.atan2(hy - 0.52, hx - 0.5) + (Math.random() - 0.5) * 1.2;
@@ -140,7 +143,7 @@ export default function AvatarGrain({ progress, booted }) {
       <motion.img
         src={avatarSrc}
         alt="Siddharth Singla"
-        style={{ opacity: fade, WebkitMaskImage: MASK, maskImage: MASK }}
+        style={{ opacity: fade, WebkitMaskImage: MASK, maskImage: MASK, filter: OUTLINE }}
         className="h-full w-full object-cover select-none"
         draggable={false}
         data-testid="hero-avatar-static"
@@ -149,12 +152,18 @@ export default function AvatarGrain({ progress, booted }) {
   }
 
   return (
-    <div ref={wrapRef} className="relative h-full w-full" data-testid="hero-avatar">
+    <div
+      ref={wrapRef}
+      className="relative h-full w-full"
+      style={{ WebkitMaskImage: MASK, maskImage: MASK }}
+      data-testid="hero-avatar"
+    >
       <img
         ref={imgRef}
         src={avatarSrc}
         alt="Siddharth Singla"
         className="absolute inset-0 h-full w-full object-cover select-none"
+        style={{ filter: OUTLINE }}
         draggable={false}
         data-testid="avatar-grain-image"
       />

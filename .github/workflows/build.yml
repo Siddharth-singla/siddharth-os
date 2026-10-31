@@ -1,0 +1,65 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      # Each step saves its output and, on failure, reports the last lines as an
+      # annotation, so the reason for a failure is visible without opening the job log.
+      - name: Install
+        run: |
+          set -o pipefail
+          npm install --legacy-peer-deps 2>&1 | tee ../install.log || {
+            msg=$(tail -n 60 ../install.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=npm install failed::$msg"
+            exit 1
+          }
+      - name: Build
+        env:
+          CI: "false"
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee ../build.log || {
+            msg=$(tail -n 60 ../build.log | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=build failed::$msg"
+            exit 1
+          }
+          if grep -q "Compiled with warnings" ../build.log; then
+            msg=$(sed -n '/Compiled with warnings/,/Search for the keywords/p' ../build.log | head -n 60 | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::warning title=build warnings::$msg"
+          fi
+
+      # Open the built site in a real headless browser and drive it with commands.
+      - name: Smoke test in headless Chromium
+        run: |
+          python3 -m http.server 4173 --directory build >/dev/null 2>&1 &
+          mkdir -p /tmp/pw && cp ../.github/smoke/smoke.cjs /tmp/pw/
+          cd /tmp/pw && npm init -y >/dev/null && npm install --silent playwright@1.49.1 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          code=0
+          SHOTS_DIR=/tmp/pw/shots node smoke.cjs || code=$?
+          mkdir -p shots && cp smoke-report.txt shots/
+          msg=$(cut -c1-300 smoke-report.txt | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g')
+          if [ $code -eq 0 ]; then echo "::notice title=smoke report::$msg"; else echo "::error title=smoke report::$msg"; fi
+          exit $code
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: /tmp/pw/shots
+          retention-days: 7

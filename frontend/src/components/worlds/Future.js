@@ -1,15 +1,82 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mic, Copy, Check } from "lucide-react";
+import { ArrowUpRight, Mic, MicOff, Copy, Check, Send } from "lucide-react";
 import { FUTURE_ITEMS, CHECKLIST, GITHUB_URL, EMAIL, LINKEDIN_URL } from "../../data/content";
 import { useOS } from "../../os/context";
-import { blip, tick } from "../../lib/audio";
+import { blip, replyChime, tick } from "../../lib/audio";
+import { speechSupported } from "../../lib/platform";
 import SectionHeader from "../SectionHeader";
+import VoiceWave from "../VoiceWave";
 
 const EASE = [0.16, 1, 0.3, 1];
 
+function IdeaInbox() {
+  const { startListening, listening, interim, energy, idea, setIdea } = useOS();
+  const [sent, setSent] = useState(false);
+  const [canListen, setCanListen] = useState(false);
+
+  useEffect(() => setCanListen(speechSupported()), []);
+  useEffect(() => { if (idea) setSent(false); }, [idea]);
+
+  const send = (e) => {
+    e.preventDefault();
+    const t = idea.trim();
+    if (!t) return;
+    const subject = encodeURIComponent("SIDDHARTH.OS: an idea for what to build next");
+    const body = encodeURIComponent(`${t}\n\n(sent from SIDDHARTH.OS)`);
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+    replyChime();
+    setSent(true);
+  };
+
+  return (
+    <form onSubmit={send} className="mt-16 w-full max-w-xl text-left" data-testid="idea-inbox">
+      <p className="text-center font-monoos text-[10px] tracking-[0.35em] text-osc">WHAT SHOULD I BUILD NEXT?</p>
+      <div className={`mt-5 border bg-panel/70 transition-colors duration-300 ${listening ? "border-osc/60" : "border-white/15 focus-within:border-osc/50"}`}>
+        <textarea
+          value={listening && interim ? interim : idea}
+          onChange={(e) => setIdea(e.target.value)}
+          rows={3}
+          placeholder="Say it or type it. Something you wish existed, a problem you keep running into…"
+          aria-label="Your idea for what Siddharth should build next"
+          data-testid="idea-input"
+          className="block w-full resize-none bg-transparent px-4 py-3 text-sm leading-relaxed text-ink placeholder:text-faint outline-none"
+        />
+        <VoiceWave active={listening} energy={energy} height={26} className="border-t border-white/5" />
+        <div className="flex items-center gap-2 border-t border-white/10 p-2">
+          {canListen && (
+            <button
+              type="button"
+              data-testid="final-idea-mic-button"
+              onClick={() => startListening((said) => setIdea((cur) => (cur ? `${cur} ${said}` : said)))}
+              onMouseEnter={() => tick()}
+              className={`flex items-center gap-2 border px-4 py-2 font-monoos text-[10px] tracking-[0.25em] transition-colors duration-300 ${
+                listening ? "border-osc bg-osc/15 text-osc" : "border-white/15 text-dim hover:text-osc hover:border-osc/60"
+              }`}
+            >
+              {listening ? <MicOff size={13} /> : <Mic size={13} />}
+              {listening ? "LISTENING…" : "SPEAK"}
+            </button>
+          )}
+          <span className="flex-1" />
+          <button
+            type="submit"
+            disabled={!idea.trim()}
+            data-testid="idea-send-button"
+            className="flex items-center gap-2 border border-osc/50 bg-osc/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-osc enabled:hover:bg-osc enabled:hover:text-void disabled:opacity-40 transition-colors duration-300"
+          >
+            <Send size={12} /> SEND TO SIDDHARTH
+          </button>
+        </div>
+      </div>
+      <p className="mt-2 text-center font-monoos text-[10px] tracking-[0.15em] text-faint" aria-live="polite">
+        {sent ? "RECEIVED. ADDED TO THE QUEUE. (FINISH SENDING IN YOUR EMAIL APP.)" : "OPENS YOUR EMAIL APP WITH THE IDEA FILLED IN."}
+      </p>
+    </form>
+  );
+}
+
 export default function Future() {
-  const { startListening, listening } = useOS();
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -135,23 +202,14 @@ export default function Future() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}
-            className="mt-16 flex flex-col items-center gap-5"
+            className="w-full flex justify-center"
           >
-            <p className="font-monoos text-[10px] tracking-[0.35em] text-osc">WHAT SHOULD I BUILD NEXT?</p>
-            <button
-              data-testid="final-idea-mic-button"
-              onClick={startListening}
-              onMouseEnter={() => tick()}
-              className={`flex items-center gap-3 border px-6 py-3.5 font-monoos text-[11px] tracking-[0.3em] transition-all duration-300 ${
-                listening
-                  ? "border-osc bg-osc/15 text-osc animate-pulse"
-                  : "border-osc/50 text-osc hover:bg-osc hover:text-void"
-              }`}
-            >
-              <Mic size={15} />
-              {listening ? "LISTENING..." : "SPEAK YOUR ANSWER"}
-            </button>
+            <IdeaInbox />
           </motion.div>
+
+          <p className="mt-8 font-monoos text-[10px] tracking-[0.3em] text-dim" data-testid="availability">
+            ● OPEN TO INTERNSHIPS
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -254,7 +312,7 @@ export default function Future() {
             <div className="flex w-full flex-col sm:flex-row items-center justify-between gap-2 font-monoos text-[9px] tracking-[0.3em] text-faint" data-testid="site-footer">
               <span>SIDDHARTH.OS — 2024 → ∞</span>
               <span>AN INTERACTIVE AUTOBIOGRAPHY</span>
-              <span>BUILT WITH CURIOSITY</span>
+              <span>BUILT BY VOICE WITH WISPR FLOW</span>
             </div>
           </div>
         </footer>
