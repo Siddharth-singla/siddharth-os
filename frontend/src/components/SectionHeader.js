@@ -20,7 +20,7 @@ export default function SectionHeader({ index, label, title, right, chapter }) {
         {right && <span className="ml-auto hidden sm:inline text-faint">{right}</span>}
       </div>
       <h2
-        className="mt-4 font-display font-bold tracking-tight leading-[0.95] text-5xl sm:text-7xl lg:text-8xl bg-gradient-to-b from-[#F7F6F0] via-[#CBCAC3] to-[#85847E] bg-clip-text text-transparent"
+        className="mt-4 font-display font-bold tracking-tight leading-[0.95] text-5xl sm:text-7xl lg:text-8xl bg-gradient-to-b from-ink via-dim to-faint bg-clip-text text-transparent"
         data-testid={`section-title-${index}`}
       >
         {title}

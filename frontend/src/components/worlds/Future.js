@@ -32,7 +32,7 @@ function IdeaInbox() {
   return (
     <form onSubmit={send} className="mt-16 w-full max-w-xl text-left" data-testid="idea-inbox">
       <p className="text-center font-monoos text-[10px] tracking-[0.35em] text-osc">WHAT SHOULD I BUILD NEXT?</p>
-      <div className={`mt-5 border bg-panel/70 transition-colors duration-300 ${listening ? "border-osc/60" : "border-white/15 focus-within:border-osc/50"}`}>
+      <div className={`mt-5 border bg-panel/70 transition-colors duration-300 ${listening ? "border-osc/60" : "border-ink/15 focus-within:border-osc/50"}`}>
         <textarea
           value={listening && interim ? interim : idea}
           onChange={(e) => setIdea(e.target.value)}
@@ -42,8 +42,8 @@ function IdeaInbox() {
           data-testid="idea-input"
           className="block w-full resize-none bg-transparent px-4 py-3 text-sm leading-relaxed text-ink placeholder:text-faint outline-none"
         />
-        <VoiceWave active={listening} energy={energy} height={26} className="border-t border-white/5" />
-        <div className="flex items-center gap-2 border-t border-white/10 p-2">
+        <VoiceWave active={listening} energy={energy} height={26} className="border-t border-ink/5" />
+        <div className="flex items-center gap-2 border-t border-ink/10 p-2">
           {canListen && (
             <button
               type="button"
@@ -51,7 +51,7 @@ function IdeaInbox() {
               onClick={() => startListening((said) => setIdea((cur) => (cur ? `${cur} ${said}` : said)))}
               onMouseEnter={() => tick()}
               className={`flex items-center gap-2 border px-4 py-2 font-monoos text-[10px] tracking-[0.25em] transition-colors duration-300 ${
-                listening ? "border-osc bg-osc/15 text-osc" : "border-white/15 text-dim hover:text-osc hover:border-osc/60"
+                listening ? "border-osc bg-osc/15 text-osc" : "border-ink/15 text-dim hover:text-osc hover:border-osc/60"
               }`}
             >
               {listening ? <MicOff size={13} /> : <Mic size={13} />}
@@ -109,7 +109,7 @@ export default function Future() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <SectionHeader index="10" label="// WORLD: FUTURE" title="WHAT'S NEXT?" right="WORLD 5/5" />
 
-          <div className="border-t border-white/10" data-testid="future-list">
+          <div className="border-t border-ink/10" data-testid="future-list">
             {FUTURE_ITEMS.map((item, i) => (
               <motion.div
                 key={item}
@@ -118,7 +118,7 @@ export default function Future() {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.55, ease: EASE, delay: i * 0.05 }}
                 onMouseEnter={() => tick()}
-                className="group flex items-center gap-6 border-b border-white/10 py-5 sm:py-6 hover:bg-white/[0.02] transition-colors duration-300"
+                className="group flex items-center gap-6 border-b border-ink/10 py-5 sm:py-6 hover:bg-ink/[0.02] transition-colors duration-300"
               >
                 <span className="font-monoos text-[10px] text-faint">{String(i + 1).padStart(2, "0")}</span>
                 <span className="flex-1 font-display font-bold text-2xl sm:text-4xl tracking-tight text-ink group-hover:text-osc group-hover:translate-x-2 transition-all duration-300">
@@ -174,7 +174,7 @@ export default function Future() {
                 className="flex items-baseline gap-2"
               >
                 <span className="text-dim tracking-[0.25em]">{name}</span>
-                <span className="flex-1 border-b border-dotted border-white/15" />
+                <span className="flex-1 border-b border-dotted border-ink/15" />
                 {state === "OK" ? (
                   <span className="text-osc">✓</span>
                 ) : (
@@ -216,14 +216,14 @@ export default function Future() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.4 }}
-            className="mt-16 w-full max-w-xl border border-white/10 bg-panel/60 text-left"
+            className="mt-16 w-full max-w-xl border border-ink/10 bg-panel/60 text-left"
             data-testid="reach-me-panel"
           >
-            <div className="flex items-center justify-between border-b border-white/10 px-5 py-2.5 font-monoos text-[10px] tracking-[0.3em] text-faint">
+            <div className="flex items-center justify-between border-b border-ink/10 px-5 py-2.5 font-monoos text-[10px] tracking-[0.3em] text-faint">
               <span>// REACH ME</span>
               <span className="text-osc">● ONLINE</span>
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-ink/5">
               <div className="flex items-center gap-3 px-5 py-4">
                 <span className="w-20 shrink-0 font-monoos text-[10px] tracking-[0.25em] text-faint">EMAIL</span>
                 <span className="min-w-0 flex-1 truncate font-monoos text-[11px] sm:text-xs text-ink" data-testid="reach-email-value">
@@ -236,7 +236,7 @@ export default function Future() {
                   className={`flex shrink-0 items-center gap-1.5 border px-3 py-1.5 font-monoos text-[9px] tracking-[0.2em] transition-colors duration-300 ${
                     copied
                       ? "border-osc bg-osc/15 text-osc"
-                      : "border-white/15 text-dim hover:text-osc hover:border-osc/60"
+                      : "border-ink/15 text-dim hover:text-osc hover:border-osc/60"
                   }`}
                 >
                   {copied ? <Check size={11} /> : <Copy size={11} />}
@@ -249,7 +249,7 @@ export default function Future() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onMouseEnter={() => tick()}
-                className="group flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors duration-300"
+                className="group flex items-center gap-3 px-5 py-4 hover:bg-ink/[0.03] transition-colors duration-300"
               >
                 <span className="w-20 shrink-0 font-monoos text-[10px] tracking-[0.25em] text-faint">GITHUB</span>
                 <span className="min-w-0 flex-1 truncate font-monoos text-[11px] sm:text-xs text-ink group-hover:text-osc transition-colors duration-300">
@@ -263,7 +263,7 @@ export default function Future() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onMouseEnter={() => tick()}
-                className="group flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors duration-300"
+                className="group flex items-center gap-3 px-5 py-4 hover:bg-ink/[0.03] transition-colors duration-300"
               >
                 <span className="w-20 shrink-0 font-monoos text-[10px] tracking-[0.25em] text-faint">LINKEDIN</span>
                 <span className="min-w-0 flex-1 truncate font-monoos text-[11px] sm:text-xs text-ink group-hover:text-osc transition-colors duration-300">
@@ -275,7 +275,7 @@ export default function Future() {
           </motion.div>
         </div>
 
-        <footer className="mt-24 w-full border-t border-white/10">
+        <footer className="mt-24 w-full border-t border-ink/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-6">
             <div className="flex flex-wrap items-center justify-center gap-3 font-monoos text-[10px] tracking-[0.25em]">
               <a
@@ -284,7 +284,7 @@ export default function Future() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onMouseEnter={() => tick()}
-                className="border border-white/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+                className="border border-ink/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
               >
                 GITHUB ↗
               </a>
@@ -292,7 +292,7 @@ export default function Future() {
                 data-testid="footer-email-link"
                 href={`mailto:${EMAIL}`}
                 onMouseEnter={() => tick()}
-                className="border border-white/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+                className="border border-ink/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
               >
                 {EMAIL} ↗
               </a>
@@ -303,7 +303,7 @@ export default function Future() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onMouseEnter={() => tick()}
-                  className="border border-white/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+                  className="border border-ink/15 px-4 py-2 text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
                 >
                   LINKEDIN ↗
                 </a>

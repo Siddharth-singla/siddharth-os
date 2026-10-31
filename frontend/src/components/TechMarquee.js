@@ -48,7 +48,7 @@ const ICONS = {
 function Chip({ t }) {
   const Icon = ICONS[t.n] || Braces;
   return (
-    <span className="flex items-center gap-3 rounded-full border border-white/10 bg-panel/80 px-6 py-3.5 whitespace-nowrap">
+    <span className="flex items-center gap-3 rounded-full border border-ink/10 bg-panel/80 px-6 py-3.5 whitespace-nowrap">
       <Icon size={18} className="text-osc shrink-0" aria-hidden="true" />
       <span className="font-monoos text-sm tracking-wide text-ink">{t.n}</span>
     </span>

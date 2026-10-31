@@ -52,8 +52,8 @@ export default function Timeline() {
                 onMouseEnter={() => tick()}
                 className={`w-[280px] sm:w-[360px] shrink-0 snap-start border p-6 sm:p-8 ${
                   t.future
-                    ? "border-dashed border-white/15 bg-transparent"
-                    : "border-white/10 bg-panel/60"
+                    ? "border-dashed border-ink/15 bg-transparent"
+                    : "border-ink/10 bg-panel/60"
                 }`}
               >
                 <div className="flex items-baseline justify-between">
@@ -76,7 +76,7 @@ export default function Timeline() {
                 ) : (
                   <div className="mt-6 flex flex-wrap gap-1.5">
                     {t.items.map((item) => (
-                      <span key={item} className="border border-white/10 px-2 py-1 font-monoos text-[10px] text-dim">
+                      <span key={item} className="border border-ink/10 px-2 py-1 font-monoos text-[10px] text-dim">
                         {item}
                       </span>
                     ))}

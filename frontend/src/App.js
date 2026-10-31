@@ -34,9 +34,22 @@ const OSS_COUNTS = (() => {
 // Phrases that only ask the closing question, rather than suggesting an idea.
 const GENERIC_IDEA = /^(what|so what|tell me what)?\s*(should|can|could)\s+(i|he|you|siddharth)\s+build( next)?\??$/i;
 
-function Over({ children }) {
+// Each section slides over the previous one on its own tone (see .tone-* in index.css).
+// The hero is Neon Navy; sections then cycle Midnight -> Dusk -> Navy, so neighbours always differ.
+// Full class names are written out so Tailwind keeps their CSS (it drops names it cannot find).
+const TONES = [
+  { name: "midnight", cls: "tone-midnight" },
+  { name: "dusk", cls: "tone-dusk" },
+  { name: "navy", cls: "tone-navy" },
+];
+
+function Over({ i, children }) {
+  const tone = TONES[i % TONES.length];
   return (
-    <div className="relative rounded-t-[2rem] sm:rounded-t-[3rem] -mt-7 sm:-mt-12 bg-void/95 border-t border-white/[0.07] shadow-[0_-28px_70px_rgba(0,0,0,0.5)]">
+    <div
+      className={`${tone.cls} relative rounded-t-[2rem] sm:rounded-t-[3rem] -mt-7 sm:-mt-12 bg-surface border-t border-ink/[0.07] shadow-[0_-28px_70px_rgba(3,5,14,0.5)]`}
+      data-tone={tone.name}
+    >
       {children}
     </div>
   );
@@ -279,17 +292,17 @@ function App() {
 
       <main className="relative z-10">
         <Hero booted={booted} />
-        <Over><About /></Over>
-        <Over><TechMarquee /></Over>
-        <Over><WorldMap /></Over>
-        <Over><VoiceSection /></Over>
-        <Over><BuildWorld /></Over>
-        <Over><Source /></Over>
-        <Over><Lab /></Over>
-        <Over><Play /></Over>
-        <Over><Mind /></Over>
-        <Over><Timeline /></Over>
-        <Over><Future /></Over>
+        <Over i={0}><About /></Over>
+        <Over i={1}><TechMarquee /></Over>
+        <Over i={2}><WorldMap /></Over>
+        <Over i={3}><VoiceSection /></Over>
+        <Over i={4}><BuildWorld /></Over>
+        <Over i={5}><Source /></Over>
+        <Over i={6}><Lab /></Over>
+        <Over i={7}><Play /></Over>
+        <Over i={8}><Mind /></Over>
+        <Over i={9}><Timeline /></Over>
+        <Over i={10}><Future /></Over>
       </main>
 
       <VoiceDock />
@@ -312,7 +325,7 @@ function App() {
             <div className="font-monoos text-xs sm:text-sm tracking-[0.35em] text-osc">
               LOADING {wipe}
             </div>
-            <div className="absolute bottom-[30%] left-1/2 -translate-x-1/2 h-px w-48 bg-white/10 overflow-hidden">
+            <div className="absolute bottom-[30%] left-1/2 -translate-x-1/2 h-px w-48 bg-ink/10 overflow-hidden">
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}

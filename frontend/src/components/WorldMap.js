@@ -29,7 +29,7 @@ export default function WorldMap() {
               y1="44"
               x2={wd.pos.x}
               y2={wd.pos.y}
-              stroke={hovered === wd.id ? "rgba(34,197,94,0.7)" : "rgba(242,240,233,0.14)"}
+              stroke={hovered === wd.id ? "rgba(216,194,156,0.75)" : "rgba(239,233,223,0.14)"}
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
               style={{ transition: "stroke 0.4s ease" }}
@@ -73,7 +73,7 @@ export default function WorldMap() {
                 className={`flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-300 ${
                   hovered === wd.id
                     ? "border-osc bg-osc/15 text-osc scale-110"
-                    : "border-white/15 bg-panel/80 text-dim group-hover:text-ink"
+                    : "border-ink/15 bg-panel/80 text-dim group-hover:text-ink"
                 }`}
               >
                 <Icon size={20} strokeWidth={1.6} />
@@ -88,7 +88,7 @@ export default function WorldMap() {
                 <motion.span
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute top-full mt-3 w-52 border border-white/10 bg-panel/95 backdrop-blur-md p-3 text-left"
+                  className="absolute top-full mt-3 w-52 border border-ink/10 bg-panel/95 backdrop-blur-md p-3 text-left"
                 >
                   <span className="block font-monoos text-[10px] leading-relaxed text-dim normal-case">{wd.desc}</span>
                   <span className="mt-2 flex items-center gap-1 font-monoos text-[10px] tracking-[0.2em] text-osc">
@@ -103,7 +103,7 @@ export default function WorldMap() {
 
       {/* mobile constellation */}
       <div className="md:hidden max-w-7xl mx-auto px-4 sm:px-6" data-testid="world-map-mobile">
-        <div className="relative border-l border-white/10 pl-6 flex flex-col gap-7 py-4">
+        <div className="relative border-l border-ink/10 pl-6 flex flex-col gap-7 py-4">
           {WORLDS.map((wd, i) => {
             const Icon = ICONS[wd.glyph];
             return (
@@ -118,7 +118,7 @@ export default function WorldMap() {
                 className="group relative flex items-center gap-4 text-left"
               >
                 <span className="absolute -left-[31px] h-2 w-2 rounded-full bg-osc" />
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-panel text-dim group-hover:text-osc group-hover:border-osc/60 transition-colors duration-300">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-panel text-dim group-hover:text-osc group-hover:border-osc/60 transition-colors duration-300">
                   <Icon size={17} strokeWidth={1.6} />
                 </span>
                 <span>

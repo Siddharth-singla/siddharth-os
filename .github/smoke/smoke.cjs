@@ -213,6 +213,40 @@ const COMMANDS = [
     check("SIDDHARTH and .OS don't collide", !hero.nameOsOverlap);
     const photoCentre = (hero.pl + hero.pr) / 2;
     check("hero photo centred", Math.abs(photoCentre - hero.vw / 2) < 24, `centre ${Math.round(photoCentre)} of ${hero.vw}`);
+    // the photo is the main thing on the hero: ~90% of a phone's width, ~2/3 of a desktop's height
+    const photoW = hero.pr - hero.pl;
+    const bigEnough = vp.viewport.width < 640 ? photoW >= 0.85 * vp.viewport.width : photoW >= 0.6 * vp.viewport.height;
+    check("hero photo is large", bigEnough, `${photoW}px wide on ${vp.viewport.width}x${vp.viewport.height}`);
+    // hero blocks stack top to bottom without touching
+    const stack = await page.evaluate(() => {
+      const ids = ["hero-title", "hero-photo", "hero-human-exe-line", "hero-tagline", "hero-process-panel", "hero-scroll-cue"];
+      return ids.map((id) => {
+        let el = document.querySelector(`[data-testid=${id}]`);
+        if (id === "hero-title") el = el.parentElement;
+        const r = el.getBoundingClientRect();
+        return { id, t: Math.round(r.top), b: Math.round(r.bottom) };
+      });
+    });
+    const clash = stack.slice(1).filter((s, i) => s.t < stack[i].b);
+    check("hero blocks don't overlap", clash.length === 0, stack.map((s) => `${s.id} ${s.t}-${s.b}`).join(", "));
+    // floating tech labels never draw over hero text or the photo (sampled over 3 s, at two scroll positions)
+    let worst = 0;
+    let zones = 0;
+    for (const y of [0, Math.round(vp.viewport.height * 0.35)]) {
+      await page.evaluate((yy) => window.scrollTo(0, yy), y);
+      for (let k = 0; k < 6; k++) {
+        await page.waitForTimeout(250);
+        const d = await page.evaluate(() => {
+          const c = document.querySelector("[data-testid=particle-field-canvas]");
+          return { z: +c.dataset.zones || 0, o: +c.dataset.overlaps || 0 };
+        });
+        zones = Math.max(zones, d.z);
+        worst = Math.max(worst, d.o);
+      }
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(600);
+    check("floating labels stay clear of hero text and photo", zones >= 3 && worst === 0, `${zones} zones, ${worst} overlaps`);
     await page.screenshot({ path: `${OUT}/${vp.name}-00-hero.png` });
     // where the first section slides over the hero: the two shades should differ
     const shades = await page.evaluate(async () => {
@@ -222,9 +256,31 @@ const COMMANDS = [
       return {
         hero: getComputedStyle(document.querySelector("[data-testid=hero-backdrop]")).backgroundImage.slice(0, 60),
         sheet: getComputedStyle(about).backgroundColor,
+        page: getComputedStyle(document.body).backgroundColor,
       };
     });
-    check("hero shade differs from the next section", /gradient/.test(shades.hero) && /7, 8, 10/.test(shades.sheet), shades.sheet);
+    check("hero shade differs from the next section", /gradient/.test(shades.hero) && shades.sheet !== shades.page, `hero ${shades.page} -> next ${shades.sheet}`);
+    // every section sheet differs in colour from the one before it (and the first from the hero)
+    const tones = await page.evaluate(() => {
+      const bg = (el) => getComputedStyle(el).backgroundColor;
+      const sheets = [...document.querySelectorAll("main > [data-tone]")];
+      const seq = [bg(document.body), ...sheets.map(bg)];
+      const same = seq.findIndex((c, i) => i > 0 && c === seq[i - 1]);
+      return { n: sheets.length, same, seq: seq.slice(0, 5).join(" | ") };
+    });
+    check("each section has its own shade", tones.n >= 10 && tones.same === -1, `${tones.n} sheets; ${tones.seq}`);
+    // the old neon green must be gone from text, backgrounds and borders
+    const green = await page.evaluate(() => {
+      const hits = new Set();
+      for (const el of document.querySelectorAll("body *")) {
+        const cs = getComputedStyle(el);
+        for (const p of ["color", "backgroundColor", "borderTopColor", "fill", "stroke"]) {
+          if (/rgba?\(34, 197, 94/.test(cs[p])) hits.add(`${el.tagName.toLowerCase()}.${p}`);
+        }
+      }
+      return [...hits];
+    });
+    check("no neon green left", green.length === 0, green.slice(0, 5).join(", "));
     await page.screenshot({ path: `${OUT}/${vp.name}-00b-hero-to-next.png` });
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);

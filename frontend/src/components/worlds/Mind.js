@@ -21,7 +21,7 @@ export default function Mind() {
               transition={{ duration: 0.6, ease: EASE, delay: li * 0.08 }}
               onMouseEnter={() => tick()}
               onClick={() => blip()}
-              className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 border border-white/10 bg-panel/40 p-5 sm:p-6 hover:border-osc/40 transition-colors duration-300"
+              className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 border border-ink/10 bg-panel/40 p-5 sm:p-6 hover:border-osc/40 transition-colors duration-300"
               data-testid={`mind-link-${link.join("-").toLowerCase().replace(/[^a-z]+/g, "-")}`}
             >
               {link.map((node, ni) => (
@@ -30,13 +30,13 @@ export default function Mind() {
                     className={`border px-3 py-1.5 font-monoos text-[11px] tracking-[0.15em] transition-colors duration-300 ${
                       ni === 0
                         ? "border-osc/50 text-osc"
-                        : "border-white/15 text-ink group-hover:border-osc/40"
+                        : "border-ink/15 text-ink group-hover:border-osc/40"
                     }`}
                   >
                     {node}
                   </span>
                   {ni < link.length - 1 && (
-                    <span className="hidden sm:block h-px flex-1 bg-gradient-to-r from-osc/50 via-white/10 to-white/10 group-hover:from-osc transition-colors duration-300" />
+                    <span className="hidden sm:block h-px flex-1 bg-gradient-to-r from-osc/50 via-ink/10 to-ink/10 group-hover:from-osc transition-colors duration-300" />
                   )}
                   {ni < link.length - 1 && (
                     <span className="sm:hidden font-monoos text-osc">↓</span>

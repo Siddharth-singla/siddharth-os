@@ -14,7 +14,7 @@ function Card({ p, index, total, clone, focused }) {
       data-testid={clone ? undefined : `build-project-${p.id.toLowerCase()}`}
       aria-hidden={clone ? "true" : undefined}
       className={`relative flex w-[84vw] max-w-[560px] shrink-0 flex-col overflow-hidden rounded-[1.75rem] border bg-panel p-6 sm:w-[520px] sm:p-8 lg:w-[560px] transition-[border-color,box-shadow] duration-500 ${
-        focused ? "border-osc/70 shadow-[0_0_0_1px_rgba(34,197,94,0.35),0_24px_70px_rgba(0,0,0,0.5)]" : "border-white/15 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+        focused ? "border-osc/70 shadow-[0_0_0_1px_rgba(216,194,156,0.3),0_24px_70px_rgba(3,5,14,0.45)]" : "border-ink/15 shadow-[0_24px_70px_rgba(3,5,14,0.35)]"
       }`}
     >
       {/* project number: top-right, with space reserved so nothing sits on top of it */}
@@ -39,7 +39,7 @@ function Card({ p, index, total, clone, focused }) {
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {p.stack.map((s) => (
-          <span key={s} className="border border-white/10 px-2 py-0.5 font-monoos text-[9px] text-dim">{s}</span>
+          <span key={s} className="border border-ink/10 px-2 py-0.5 font-monoos text-[9px] text-dim">{s}</span>
         ))}
       </div>
 
@@ -69,7 +69,7 @@ function Card({ p, index, total, clone, focused }) {
               data-testid={clone ? undefined : `project-link-${p.id.toLowerCase()}-${l.label.toLowerCase()}`}
               onMouseEnter={() => tick()}
               aria-label={`Open ${p.name}: ${l.label === "LIVE" ? "live site" : "GitHub repository"} (opens in a new tab)`}
-              className="flex items-center gap-1 border border-white/15 px-3 py-1.5 font-monoos text-[9px] tracking-[0.2em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+              className="flex items-center gap-1 border border-ink/15 px-3 py-1.5 font-monoos text-[9px] tracking-[0.2em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
             >
               {l.label} <ArrowUpRight size={11} />
             </a>
@@ -315,7 +315,7 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
             onClick={() => move(-1)}
             aria-label="Previous project"
             data-testid="carousel-prev"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-dim hover:border-osc/60 hover:text-osc transition-colors duration-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-dim hover:border-osc/60 hover:text-osc transition-colors duration-300"
           >
             <ArrowLeft size={15} />
           </button>
@@ -324,7 +324,7 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
             onClick={() => move(1)}
             aria-label="Next project"
             data-testid="carousel-next"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-dim hover:border-osc/60 hover:text-osc transition-colors duration-300"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-dim hover:border-osc/60 hover:text-osc transition-colors duration-300"
           >
             <ArrowRight size={15} />
           </button>

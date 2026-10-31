@@ -46,7 +46,7 @@ export default function SystemBar() {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50" data-testid="system-bar">
-      <div className="backdrop-blur-md bg-void/70 border-b border-white/10">
+      <div className="backdrop-blur-md bg-void/70 border-b border-ink/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 flex items-center justify-between font-monoos text-[11px] tracking-[0.2em]">
           <div className="flex items-center gap-3">
             <img src={`${process.env.PUBLIC_URL}/favicon.svg`} className="h-5 w-5" alt="SIDDHARTH.OS mark" />
@@ -68,7 +68,7 @@ export default function SystemBar() {
               className={`flex items-center gap-2 border px-3 py-1.5 transition-colors duration-300 ${
                 listening
                   ? "border-osc bg-osc/15 text-osc"
-                  : "border-white/15 text-dim hover:text-ink hover:border-osc/50"
+                  : "border-ink/15 text-dim hover:text-ink hover:border-osc/50"
               }`}
             >
               {listening ? <MicOff size={13} /> : <Mic size={13} />}
@@ -77,7 +77,7 @@ export default function SystemBar() {
             <button
               data-testid="sound-toggle-button"
               onClick={toggleMute}
-              className="flex items-center gap-2 border border-white/15 px-3 py-1.5 text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
+              className="flex items-center gap-2 border border-ink/15 px-3 py-1.5 text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
               aria-label={muted ? "Unmute interface sounds" : "Mute interface sounds"}
             >
               {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}

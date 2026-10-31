@@ -3,35 +3,51 @@
 @tailwind utilities;
 
 @layer base {
+  /* Palette: Pantone 20-0142 TPM "Neon Navy" #131936 and the moodboard around it.
+     Navy (hue ~229) carries every background; the warm limestone of the facade (hue ~40, close to
+     navy's complement) carries the content. Secondary text stays cool and low-chroma, so warm means
+     "read this" and cool means "supporting". Roughly 60% navy, 30% ivory text, 10% limestone accent.
+     Contrast was checked with /siddharth-os/palette-check.mjs: every text colour is WCAG AA (4.5:1)
+     or better on every surface and panel. */
   :root {
-    --background: 240 9% 3%;
-    --foreground: 45 25% 93%;
-    --card: 222 16% 7%;
-    --card-foreground: 45 25% 93%;
-    --popover: 222 16% 7%;
-    --popover-foreground: 45 25% 93%;
-    --primary: 142 71% 45%;
-    --primary-foreground: 240 9% 3%;
-    --secondary: 222 16% 10%;
-    --secondary-foreground: 45 25% 93%;
-    --muted: 222 16% 10%;
-    --muted-foreground: 45 8% 60%;
-    --accent: 222 16% 10%;
-    --accent-foreground: 45 25% 93%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 100% / 0.08;
-    --input: 0 0% 100% / 0.08;
-    --ring: 142 71% 45%;
+    --c-void: 7 10 24; /* Blueberry shadow #070A18: deepest tone */
+    --c-ink: 239 233 223; /* Ivory #EFE9DF: primary text */
+    --c-accent: 216 194 156; /* Limestone #D8C29C: the single accent */
+    --c-line: 72 82 128; /* Dusty navy: outlines and rules */
+    --c-warn: 232 203 142;
+    --c-err: 242 185 174;
     --radius: 0.25rem;
   }
 
+  /* Section tones. Each sheet that slides over the hero takes one, so every new section reads as a
+     new surface. Panels sit one step lighter (lighter means raised, on a dark UI), and secondary
+     text is retuned per tone to keep its contrast. */
+  :root,
+  .tone-navy {
+    --c-surface: 19 25 54; /* Neon Navy #131936: hero */
+    --c-panel: 28 35 71;
+    --c-dim: 186 192 217;
+    --c-faint: 149 156 190;
+  }
+  .tone-midnight {
+    --c-surface: 8 11 29; /* Midnight #080B1D */
+    --c-panel: 18 23 49;
+    --c-dim: 179 185 211;
+    --c-faint: 137 144 180;
+  }
+  .tone-dusk {
+    --c-surface: 37 46 92; /* Dusk #252E5C */
+    --c-panel: 48 57 108;
+    --c-dim: 200 205 227;
+    --c-faint: 167 174 205;
+  }
+
   * {
-    border-color: hsl(var(--border));
+    border-color: rgb(var(--c-ink) / 0.08);
   }
 
   html {
-    background: #07080a;
+    background: rgb(var(--c-surface));
     /* Framer Motion 11 measures scroll progress against <html> and warns if it is position: static */
     position: relative;
   }
@@ -44,28 +60,28 @@
   }
 
   body {
-    @apply bg-[#07080A] text-[#F2F0E9] antialiased;
+    @apply bg-surface text-ink antialiased;
     font-family: "Inter", sans-serif;
   }
 
   ::selection {
-    background: rgba(34, 197, 94, 0.85);
-    color: #07080a;
+    background: rgb(var(--c-accent) / 0.9);
+    color: rgb(var(--c-void));
   }
 
   ::-webkit-scrollbar {
     width: 9px;
   }
   ::-webkit-scrollbar-track {
-    background: #07080a;
+    background: rgb(var(--c-void));
   }
   ::-webkit-scrollbar-thumb {
-    background: #1d232c;
-    border: 2px solid #07080a;
+    background: rgb(37 46 92); /* Dusk */
+    border: 2px solid rgb(var(--c-void));
     border-radius: 8px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #22c55e;
+    background: rgb(var(--c-line));
   }
 }
 
@@ -87,14 +103,14 @@
     height: 200%;
     pointer-events: none;
     z-index: 70;
-    opacity: 0.08;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05; /* monochrome film grain: texture without colour noise */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: grain-shift 9s steps(6) infinite;
   }
 
   .fine-grid {
-    background-image: linear-gradient(to right, rgba(242, 240, 233, 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(242, 240, 233, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(var(--c-ink) / 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--c-ink) / 0.03) 1px, transparent 1px);
     background-size: 28px 28px;
   }
 
@@ -106,14 +122,14 @@
   }
 
   .text-outline {
-    -webkit-text-stroke: 1px rgba(242, 240, 233, 0.28);
+    -webkit-text-stroke: 1px rgb(var(--c-ink) / 0.24);
     color: transparent;
   }
 
   .blink-caret::after {
     content: "▌";
     margin-left: 2px;
-    color: #22c55e;
+    color: rgb(var(--c-accent));
     animation: caret-blink 1s steps(2) infinite;
   }
 
@@ -146,8 +162,8 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
 @keyframes flicker {

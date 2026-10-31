@@ -32,7 +32,7 @@ export default function Lab() {
           GUARANTEED. CURIOSITY EXCEEDS CAPACITY.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10" data-testid="lab-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-ink/10 border border-ink/10" data-testid="lab-grid">
           {LAB.map((item, i) => (
             <motion.div
               key={item.n}
@@ -43,7 +43,7 @@ export default function Lab() {
               transition={{ duration: 0.55, ease: EASE, delay: i * 0.06 }}
               onMouseEnter={() => tick()}
               onClick={() => blip()}
-              className={`group relative bg-void p-6 min-h-[168px] flex flex-col justify-between hover:bg-panel transition-colors duration-300 ${
+              className={`group relative bg-surface p-6 min-h-[168px] flex flex-col justify-between hover:bg-panel transition-colors duration-300 ${
                 item.status === "BROKEN" ? "flicker" : ""
               }`}
             >
@@ -68,7 +68,7 @@ export default function Lab() {
             data-testid="lab-to-play-button"
             onClick={() => navigate("play", "PLAY.EXE")}
             onMouseEnter={() => tick()}
-            className="border border-white/15 px-6 py-3 font-monoos text-[11px] tracking-[0.3em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+            className="border border-ink/15 px-6 py-3 font-monoos text-[11px] tracking-[0.3em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
           >
             NEXT WORLD: PLAY →
           </button>

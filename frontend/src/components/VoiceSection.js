@@ -78,7 +78,7 @@ export default function VoiceSection() {
                   data-testid={`voice-chip-${ex.toLowerCase().replace(/[^a-z]+/g, "-")}`}
                   onClick={() => { blip(); runCommand(ex); }}
                   onMouseEnter={() => tick()}
-                  className="border border-white/10 bg-panel/60 px-3 py-2 font-monoos text-[11px] text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
+                  className="border border-ink/10 bg-panel/60 px-3 py-2 font-monoos text-[11px] text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
                 >
                   "{ex}"
                 </button>
@@ -100,10 +100,10 @@ export default function VoiceSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
-            className={`border bg-panel/70 font-monoos text-xs transition-colors duration-300 ${listening ? "border-osc/50" : "border-white/10"}`}
+            className={`border bg-panel/70 font-monoos text-xs transition-colors duration-300 ${listening ? "border-osc/50" : "border-ink/10"}`}
             data-testid="voice-console"
           >
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-2 text-[10px] tracking-[0.25em] text-faint">
+            <div className="flex items-center justify-between border-b border-ink/10 px-4 py-2 text-[10px] tracking-[0.25em] text-faint">
               <span>/dev/voice — COMMAND CONSOLE</span>
               <span className={listening ? "text-osc" : "text-faint"}>{listening ? "● REC" : "● LIVE"}</span>
             </div>
@@ -119,8 +119,8 @@ export default function VoiceSection() {
               ))}
               {listening && <p className="text-ink/60 italic">&gt; {interim || "listening…"}</p>}
             </div>
-            <VoiceWave active={listening} energy={energy} height={48} className="border-t border-white/5" />
-            <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/10 px-4 py-3">
+            <VoiceWave active={listening} energy={energy} height={48} className="border-t border-ink/5" />
+            <form onSubmit={submit} className="flex items-center gap-2 border-t border-ink/10 px-4 py-3">
               <span className="text-osc shrink-0">&gt;</span>
               <input
                 value={text}
@@ -134,7 +134,7 @@ export default function VoiceSection() {
                 <CornerDownLeft size={14} />
               </button>
             </form>
-            <p className="border-t border-white/5 px-4 py-2 text-[10px] tracking-[0.1em] text-faint">{hint}</p>
+            <p className="border-t border-ink/5 px-4 py-2 text-[10px] tracking-[0.1em] text-faint">{hint}</p>
           </motion.div>
         </div>
       </div>
