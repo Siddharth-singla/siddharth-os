@@ -218,6 +218,20 @@ const COMMANDS = [
     const hiddenPending = await page.evaluate(() => document.body.innerText.includes("Not documented"));
     if (hiddenPending) failures++;
     report.push(`${vp.name} | "Not documented" placeholders hidden | ${hiddenPending ? "FAIL" : "OK"}`);
+    // Sideways sliders keep their slide but show no scrollbar
+    const bars = await page.evaluate(() =>
+      ["build-carousel-track", "timeline-scroll"].map((id) => {
+        const el = document.querySelector(`[data-testid=${id}]`);
+        return el ? `${id}:${el.offsetHeight - el.clientHeight}px` : `${id}:missing`;
+      })
+    );
+    check("sliders have no visible scrollbar", bars.every((b) => b.endsWith(":0px")), bars.join(" "));
+    // The photo is the cut-out PNG with its outline
+    const photo = await page.evaluate(() => {
+      const img = document.querySelector("[data-testid=avatar-grain-image], [data-testid=hero-avatar-static]");
+      return img ? { src: img.currentSrc || img.src, filter: getComputedStyle(img).filter } : null;
+    });
+    check("photo background removed, outline on", !!photo && /avatar-cutout/.test(photo.src) && /drop-shadow/.test(photo.filter), photo ? photo.src.split("/").pop() : "no photo");
     // Sideways overflow: the page itself shifted, or any visible element sticking out past the screen
     // (ignoring elements inside containers that are meant to scroll or clip sideways).
     const overflow = await page.evaluate(() => {

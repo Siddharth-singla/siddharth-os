@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { TIMELINE, TIMELINE_QUOTE } from "../../data/content";
 import { tick } from "../../lib/audio";
@@ -6,12 +7,39 @@ import SectionHeader from "../SectionHeader";
 const EASE = [0.16, 1, 0.3, 1];
 
 export default function Timeline() {
+  // the scrollbar is hidden, so a mouse can drag the cards sideways (touch and trackpads swipe natively)
+  const rowRef = useRef(null);
+  const drag = useRef(null);
+  const onPointerDown = (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    drag.current = { x: e.clientX, left: rowRef.current.scrollLeft, moved: false };
+  };
+  const onPointerMove = (e) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) > 4) {
+      d.moved = true;
+      rowRef.current.setPointerCapture?.(e.pointerId);
+    }
+    if (d.moved) rowRef.current.scrollLeft = d.left - dx;
+  };
+  const onPointerUp = () => { drag.current = null; };
   return (
     <section id="timeline" className="relative py-28 sm:py-36" data-testid="timeline-world">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader index="09" label="// CHAPTERS" title="THE STORY SO FAR" right="2024 → ∞" />
 
-        <div className="overflow-x-auto pb-4 [scrollbar-width:thin]" data-testid="timeline-scroll">
+        <div
+          ref={rowRef}
+          className="no-scrollbar overflow-x-auto pb-4 select-none cursor-grab active:cursor-grabbing"
+          data-testid="timeline-scroll"
+          data-lenis-prevent-horizontal=""
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+        >
           <div className="flex gap-5 sm:gap-6 min-w-max items-stretch">
             {TIMELINE.map((t, i) => (
               <motion.div
@@ -59,7 +87,7 @@ export default function Timeline() {
           </div>
         </div>
 
-        <p className="mt-4 font-monoos text-[10px] tracking-[0.3em] text-faint">SCROLL SIDEWAYS →</p>
+        <p className="mt-4 font-monoos text-[10px] tracking-[0.3em] text-faint">SWIPE OR DRAG SIDEWAYS →</p>
 
         <motion.p
           initial={{ opacity: 0, y: 18 }}
