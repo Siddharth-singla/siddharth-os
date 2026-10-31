@@ -145,7 +145,7 @@ const COMMANDS = [
         const links = [...card.querySelectorAll("a")];
         if (!links.length) continue;
         // nothing in the header row may run under the big number
-        for (const el of card.querySelectorAll(":scope > div:first-of-type > span")) {
+        for (const el of card.querySelectorAll(":scope > [data-card-head] > span")) {
           const r = el.getBoundingClientRect();
           if (!(r.right <= num.left || r.bottom <= num.top || r.top >= num.bottom)) out.push(`${card.dataset.id}: "${el.textContent.trim().slice(0, 16)}" under number`);
         }

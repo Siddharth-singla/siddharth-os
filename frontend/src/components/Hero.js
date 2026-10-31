@@ -89,7 +89,7 @@ export default function Hero({ booted }) {
                 initial={{ y: "112%" }}
                 animate={booted ? { y: 0 } : {}}
                 transition={{ duration: 1, ease: EASE, delay: 0.1 }}
-                className="font-display font-extrabold leading-[1.02] tracking-tight text-[9.2vw] sm:whitespace-nowrap sm:text-[clamp(2rem,6.3vw,6.1rem)]"
+                className="font-display font-extrabold leading-[1.3] sm:leading-[1.02] tracking-tight text-[9.2vw] sm:whitespace-nowrap sm:text-[clamp(2rem,6.3vw,6.1rem)]"
                 data-testid="hero-title"
               >
                 {/* phones: two lines (the name, then .OS); wider screens: one line.

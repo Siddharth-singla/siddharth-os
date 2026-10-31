@@ -20,15 +20,19 @@ function Card({ p, index, total, clone, focused }) {
       {/* project number: top-right, with space reserved so nothing sits on top of it */}
       <span
         aria-hidden="true"
-        className="pointer-events-none select-none absolute right-5 top-3 sm:right-7 font-display font-extrabold leading-none text-outline text-[2.9rem] sm:text-[clamp(3.5rem,6vw,5.25rem)] opacity-80"
+        className="pointer-events-none select-none absolute right-5 top-3 sm:right-7 font-display font-extrabold leading-none text-outline text-[2.5rem] sm:text-[clamp(3.5rem,6vw,5.25rem)] opacity-80"
       >
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <div className="flex flex-wrap items-center gap-2 pr-[5.5rem] sm:pr-36">
+      {/* meta line (id · date) beside the number; the chapter tag gets its own line below it.
+          On phones that line starts under the number, so it can use the full card width. */}
+      <div data-card-head className="flex flex-wrap items-center gap-x-3 gap-y-1 pr-[5.5rem] sm:pr-36">
         <span className="font-monoos text-[10px] text-faint">{p.id}</span>
-        <span className="border border-osc/40 bg-osc/10 px-2 py-0.5 font-monoos text-[9px] tracking-[0.2em] text-osc">{p.chapter}</span>
         {p.date && <span className="font-monoos text-[9px] tracking-[0.2em] text-faint">{p.date}</span>}
+      </div>
+      <div data-card-head className="mt-7 sm:mt-3 flex sm:pr-36">
+        <span className="border border-osc/40 bg-osc/10 px-2 py-0.5 font-monoos text-[9px] tracking-[0.2em] text-osc">{p.chapter}</span>
       </div>
 
       <h3 className="mt-4 pr-20 sm:pr-24 font-display font-bold text-2xl sm:text-3xl leading-tight tracking-tight text-ink">{p.name}</h3>
