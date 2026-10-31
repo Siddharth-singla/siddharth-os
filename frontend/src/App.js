@@ -135,12 +135,8 @@ function App() {
       reply.forEach((line, i) => setTimeout(() => pushLog("system", line), 350 + i * 280));
       if (cmd.filter) setProjectFilter(cmd.filter);
       if (cmd.section) {
-        // A filter lands on the project cards; a named project lands on its own card.
-        const target = !cmd.filter
-          ? cmd.section
-          : cmd.filter.startsWith("project:")
-          ? `module-${cmd.filter.slice(8).toLowerCase()}`
-          : "modules";
+        // Filters and named projects land on the project carousel, which centres the project itself.
+        const target = cmd.filter ? "modules" : cmd.section;
         const navAt = 900 + reply.length * 280;
         setTimeout(() => navigate(target, cmd.label), navAt);
         // On phones the console covers half the screen; tuck it away once the page has moved.

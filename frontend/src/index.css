@@ -98,6 +98,13 @@
     background-size: 28px 28px;
   }
 
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .text-outline {
     -webkit-text-stroke: 1px rgba(242, 240, 233, 0.28);
     color: transparent;

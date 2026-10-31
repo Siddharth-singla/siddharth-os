@@ -100,21 +100,88 @@ const COMMANDS = [
 
     const clock = await page.textContent("[data-testid=play-match-clock]").catch(() => "?");
     report.push(`${vp.name} | match clock | ${clock}`);
-    // A project card you jump to must not be dimmed.
-    if (!(await page.$("[data-testid=voice-dock-input]"))) {
-      await page.click("[data-testid=voice-dock-button]");
-      await page.waitForTimeout(400);
-    }
+    const check = (label, ok, detail = "") => {
+      if (!ok) failures++;
+      report.push(`${vp.name} | ${label} | ${ok ? "OK" : "FAIL"}${detail ? " " + detail : ""}`);
+    };
+    const reopenDock = async () => {
+      if (!(await page.$("[data-testid=voice-dock-input]"))) {
+        await page.click("[data-testid=voice-dock-button]");
+        await page.waitForTimeout(400);
+      }
+    };
+    const closeDock = async () => {
+      if (await page.$("[data-testid=voice-dock-close-button]")) await page.click("[data-testid=voice-dock-close-button]");
+      await page.waitForTimeout(300);
+    };
+
+    // A project asked for by voice is brought to the centre of the carousel and fully on screen.
+    await reopenDock();
     await page.fill("[data-testid=voice-dock-input]", "tell me about savoury");
     await page.press("[data-testid=voice-dock-input]", "Enter");
-    await page.waitForTimeout(4200);
-    const cardOpacity = await page.evaluate(() => {
-      const el = document.querySelector("[data-testid=build-project-mod-07] > div");
-      return el ? Number(getComputedStyle(el).opacity) : -1;
+    await page.waitForTimeout(5200);
+    await closeDock();
+    const sav = await page.evaluate(() => {
+      const r = document.querySelector("[data-testid=build-project-mod-07]").getBoundingClientRect();
+      return { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom), vw: innerWidth, vh: innerHeight };
     });
-    const cardOk = cardOpacity > 0.95;
-    if (!cardOk) failures++;
-    report.push(`${vp.name} | jumped-to card at full brightness | ${cardOk ? "OK" : "FAIL"} (opacity ${cardOpacity})`);
+    check("voice-focused project is on screen", sav.l >= -2 && sav.r <= sav.vw + 2 && sav.t < sav.vh && sav.b > 0, JSON.stringify(sav));
+    await page.screenshot({ path: `${OUT}/${vp.name}-20-carousel-focus.png` });
+
+    // Card layout: GitHub/LIVE buttons sit at the bottom right and never cover the big number.
+    const layout = await page.evaluate(() => {
+      const out = [];
+      for (const card of document.querySelectorAll("[data-testid^=build-project-]")) {
+        const c = card.getBoundingClientRect();
+        const num = card.querySelector("span[aria-hidden=true]").getBoundingClientRect();
+        for (const a of card.querySelectorAll("a")) {
+          const r = a.getBoundingClientRect();
+          const overlapsNum = !(r.right < num.left || r.left > num.right || r.bottom < num.top || r.top > num.bottom);
+          const bottomRight = c.bottom - r.bottom < 60 && c.right - r.right < 60;
+          if (overlapsNum || !bottomRight) out.push(`${card.dataset.id}:${a.textContent.trim()}${overlapsNum ? " overlaps number" : ""}${bottomRight ? "" : " not bottom-right"}`);
+        }
+      }
+      return out;
+    });
+    check("project buttons bottom-right, clear of numbers", layout.length === 0, layout.slice(0, 4).join("; "));
+
+    // Auto-scroll: with the pointer away from it, the carousel keeps moving.
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(5000); // the voice focus pauses auto-scroll for a while
+    const s1 = await page.evaluate(() => document.querySelector("[data-testid=build-carousel-track]").scrollLeft);
+    await page.waitForTimeout(2000);
+    const s2 = await page.evaluate(() => document.querySelector("[data-testid=build-carousel-track]").scrollLeft);
+    check("carousel auto-scrolls left to right", s2 - s1 > 20, `moved ${Math.round(s2 - s1)}px in 2s`);
+
+    // Infinite loop: pressing "previous" from the first project wraps round to the last.
+    await page.evaluate(() => {
+      const t = document.querySelector("[data-testid=build-carousel-track]");
+      const first = t.querySelector("[data-testid=build-project-mod-01]");
+      t.scrollLeft = first.offsetLeft - (t.clientWidth - first.offsetWidth) / 2;
+      t.dispatchEvent(new Event("scroll"));
+    });
+    await page.waitForTimeout(300);
+    for (let k = 0; k < 2; k++) {
+      await page.click("[data-testid=carousel-prev]");
+      await page.waitForTimeout(800);
+    }
+    const counter = await page.textContent("[data-testid=build-carousel] p");
+    check("carousel loops past the first project", /^0[78] \/ 08/.test(counter.trim()), `counter "${counter.trim().slice(0, 30)}"`);
+    await page.screenshot({ path: `${OUT}/${vp.name}-21-carousel-loop.png` });
+
+    // Hero: the name sits above the photo, fits the screen, and they don't overlap.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(1800);
+    const hero = await page.evaluate(() => {
+      const t = document.querySelector("[data-testid=hero-title]").getBoundingClientRect();
+      const p = document.querySelector("[data-testid=hero-photo]").getBoundingClientRect();
+      return { tb: Math.round(t.bottom), tl: Math.round(t.left), tr: Math.round(t.right), pt: Math.round(p.top), pl: Math.round(p.left), pr: Math.round(p.right), vw: innerWidth };
+    });
+    check("hero name above photo, no overlap", hero.tb <= hero.pt, JSON.stringify(hero));
+    check("hero name fits the screen", hero.tl >= 0 && hero.tr <= hero.vw, "");
+    const photoCentre = (hero.pl + hero.pr) / 2;
+    check("hero photo centred", Math.abs(photoCentre - hero.vw / 2) < 24, `centre ${Math.round(photoCentre)} of ${hero.vw}`);
+    await page.screenshot({ path: `${OUT}/${vp.name}-00-hero.png` });
 
     const hiddenPending = await page.evaluate(() => document.body.innerText.includes("Not documented"));
     if (hiddenPending) failures++;

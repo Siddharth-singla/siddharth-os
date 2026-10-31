@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import { TECHS, TECH_CHAINS, PROJECTS, FILTERS, EDUCATION, EXPERIENCE, CERTS, ARCHIVE_QUOTE, PENDING } from "../../data/content";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { TECHS, TECH_CHAINS, PROJECTS, FILTERS, EDUCATION, EXPERIENCE, CERTS, ARCHIVE_QUOTE } from "../../data/content";
+import { useOS } from "../../os/context";
+import { blip, tick } from "../../lib/audio";
+import SectionHeader from "../SectionHeader";
+import ProjectCarousel from "./ProjectCarousel";
 
 const isLive = (p) => p.links.some((l) => l.label === "LIVE");
-import { useOS } from "../../os/context";
-import { blip, scrollTick, tick } from "../../lib/audio";
-import SectionHeader from "../SectionHeader";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -23,123 +23,23 @@ const POS = RINGS.flatMap(({ items, r, start }) =>
   })
 );
 
-function ModuleCard({ p, i, total, reduced, coverRef, selfRef }) {
-  // How far the next card has slid over this one (0 = not at all, 1 = fully).
-  // Measured from the next card's real position on screen: scroll-progress helpers
-  // mis-measure sticky elements and dimmed cards that nothing was covering.
-  const coverP = useMotionValue(0);
-  const scale = useTransform(coverP, [0, 1], [1, 0.94]);
-  const dim = useTransform(coverP, [0, 1], [1, 0.45]);
-  const isLast = i === total - 1;
-
-  useEffect(() => {
-    if (!coverRef || reduced) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const el = coverRef.current;
-      const me = selfRef && selfRef.current;
-      if (!el || !me) return;
-      const next = el.getBoundingClientRect().top;
-      const mine = me.getBoundingClientRect();
-      // 0 while the next card is below this card's lower part; 1 once it reaches this card's top area.
-      const startY = mine.top + mine.height * 0.75;
-      const endY = mine.top + 40;
-      const v = Math.min(1, Math.max(0, (startY - next) / Math.max(1, startY - endY)));
-      coverP.set(v);
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [coverRef, selfRef, reduced, coverP]);
-
-  return (
-    <div
-      ref={selfRef}
-      className="sticky pb-10"
-      style={{ top: `calc(4.5rem + ${i * 18}px)`, zIndex: i + 1 }}
-      data-testid={`build-project-${p.id.toLowerCase()}`}
-    >
-      <motion.div
-        style={reduced || isLast || !coverRef ? {} : { scale, opacity: dim }}
-        className="relative origin-top overflow-hidden rounded-[2rem] border border-white/15 bg-panel px-5 py-7 sm:px-10 sm:py-12 min-h-[380px] sm:min-h-[440px] shadow-[0_-24px_70px_rgba(0,0,0,0.55)]"
-      >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none select-none absolute -top-3 right-6 sm:right-10 font-display font-extrabold leading-none text-outline text-[clamp(4.5rem,9vw,8rem)] opacity-80"
-        >
-          {String(i + 1).padStart(2, "0")}
-        </span>
-
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <span className="font-monoos text-[10px] text-faint">{p.id}</span>
-          <span className="border border-osc/40 bg-osc/10 px-2 py-0.5 font-monoos text-[9px] tracking-[0.2em] text-osc">{p.chapter}</span>
-          {p.date && <span className="font-monoos text-[9px] tracking-[0.2em] text-faint">{p.date}</span>}
-          <span className="ml-auto flex flex-wrap gap-2">
-            {p.links.map((l) => (
-              <a
-                key={l.label}
-                href={l.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid={`project-link-${p.id.toLowerCase()}-${l.label.toLowerCase()}`}
-                onMouseEnter={() => tick()}
-                aria-label={`Open ${p.name} — ${l.label === "LIVE" ? "live site" : "GitHub repository"} (opens in a new tab)`}
-                className="flex items-center gap-1 border border-white/15 px-2.5 py-1.5 font-monoos text-[9px] tracking-[0.2em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
-              >
-                {l.label} <ArrowUpRight size={11} />
-              </a>
-            ))}
-          </span>
-        </div>
-
-        <h3 className="mt-4 font-display font-bold text-2xl sm:text-4xl tracking-tight text-ink max-w-[80%]">{p.name}</h3>
-
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {p.stack.map((s) => (
-            <span key={s} className="border border-white/10 px-2 py-0.5 font-monoos text-[9px] text-dim">{s}</span>
-          ))}
-        </div>
-
-        <div className="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
-          {p.stages
-            .filter(([, text]) => text && text !== PENDING)
-            .map(([label, text]) => (
-              <div key={label}>
-                <p className={`font-monoos text-[9px] tracking-[0.25em] ${label === "WHAT I LEARNED" ? "text-osc" : "text-dim"}`}>{label}</p>
-                <p className="mt-1 text-xs leading-relaxed text-dim">{text}</p>
-              </div>
-            ))}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 export default function BuildWorld() {
   const { projectFilter, setProjectFilter, navigate } = useOS();
   const reduced = useReducedMotion();
   const [hoverTech, setHoverTech] = useState(null);
   const [filter, setFilter] = useState("all");
-  const [active, setActive] = useState(0);
-  const shells = useRef([]);
-  const stackRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start 0.85", "end 0.4"] });
-  const railScale = useSpring(scrollYProgress, { stiffness: 120, damping: 26 });
+  const [focus, setFocus] = useState(null);
 
   useEffect(() => {
     if (projectFilter) {
-      // "project:MOD-07" opens one project, so show them all and let the app scroll to it.
-      setFilter(projectFilter.startsWith("project:") ? "all" : projectFilter);
+      // "project:MOD-07" opens one project: show them all and bring that one to the centre.
+      if (projectFilter.startsWith("project:")) {
+        setFilter("all");
+        setFocus({ id: projectFilter.slice(8), at: Date.now() });
+      } else {
+        setFilter(projectFilter);
+        setFocus(null);
+      }
       setProjectFilter(null);
     }
   }, [projectFilter, setProjectFilter]);
@@ -150,35 +50,6 @@ export default function BuildWorld() {
       : filter === "live"
       ? PROJECTS.filter(isLive)
       : PROJECTS.filter((p) => p.tags.includes(filter));
-
-  if (shells.current.length !== shown.length) {
-    shells.current = shown.map((_, i) => shells.current[i] || { current: null });
-  }
-
-  useEffect(() => {
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        let cur = 0;
-        shells.current.forEach((r, i) => {
-          const el = r && r.current;
-          if (el && el.getBoundingClientRect().top <= 72 + i * 18 + 16) cur = i;
-        });
-        setActive((a) => (a === cur ? a : cur));
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!reduced) scrollTick();
-  }, [active, reduced]);
 
   return (
     <section id="build" className="relative py-28 sm:py-36" data-testid="build-world">
@@ -346,15 +217,15 @@ export default function BuildWorld() {
           </div>
         </div>
 
-        {/* system modules — pinned, stacked chapters */}
-        <div className="mt-28" data-testid="build-project-modules">
+        {/* system modules: a horizontal, endlessly looping carousel */}
+        <div id="modules" className="mt-28 scroll-mt-24" data-testid="build-project-modules">
           <div className="flex flex-wrap items-center gap-3">
             <p className="font-monoos text-[11px] tracking-[0.3em] text-osc mr-2">// SYSTEM MODULES</p>
             {FILTERS.map((f) => (
               <button
                 key={f.key}
                 data-testid={`build-filter-${f.key}`}
-                onClick={() => { blip(); setFilter(f.key); }}
+                onClick={() => { blip(); setFocus(null); setFilter(f.key); }}
                 className={`border px-3 py-1.5 font-monoos text-[10px] tracking-[0.2em] transition-colors duration-300 ${
                   filter === f.key ? "border-osc bg-osc/15 text-osc" : "border-white/15 text-dim hover:text-ink"
                 }`}
@@ -363,37 +234,8 @@ export default function BuildWorld() {
               </button>
             ))}
           </div>
-          <p className="mt-4 font-monoos text-[10px] tracking-[0.2em] text-faint">
-            // SYSTEM MODULES — EACH CARD STACKS UP AND SCALES BACK AS THE NEXT ONE ARRIVES.
-          </p>
-
-          <div ref={stackRef} id="modules" className="relative mt-8 scroll-mt-28" data-testid="build-card-stack">
-            {/* side progress rail */}
-            <div className="absolute right-0 top-6 bottom-0 w-[3px] bg-white/5" aria-hidden="true">
-              <motion.div
-                style={{ scaleY: reduced ? 1 : railScale }}
-                className="h-full w-full origin-top bg-osc/70"
-                data-testid="build-stack-progress"
-              />
-            </div>
-
-            <div className="pr-5">
-              {shown.map((p, i) => (
-                <div key={`${filter}-${p.id}`} id={`module-${p.id.toLowerCase()}`}>
-                  <ModuleCard
-                    p={p}
-                    i={i}
-                    total={shown.length}
-                    reduced={reduced}
-                    selfRef={shells.current[i]}
-                    coverRef={shells.current[i + 1] || null}
-                  />
-                </div>
-              ))}
-              {!shown.length && (
-                <p className="py-16 text-center font-monoos text-xs text-faint">// NO MODULES IN THIS FILTER</p>
-              )}
-            </div>
+          <div className="mt-8">
+            <ProjectCarousel key={filter} projects={shown} focus={focus} reduced={reduced} />
           </div>
 
           <div className="mt-14 max-w-3xl">
