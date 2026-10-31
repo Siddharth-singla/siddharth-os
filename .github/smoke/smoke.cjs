@@ -41,7 +41,14 @@ const COMMANDS = [
       if (m.type() === "error") errors.push(`console: ${m.text()}`);
     });
 
+    page.on("console", (m) => {
+      if (m.type() === "warning" && /AudioContext/.test(m.text())) errors.push(`audio warning: ${m.text().slice(0, 80)}`);
+    });
     await page.goto(URL, { waitUntil: "networkidle" });
+    // hover before any click, like a visitor would; this must not try to start audio
+    await page.waitForSelector("[data-testid=boot-examples] button", { timeout: 20000 }).catch(() => {});
+    await page.hover("[data-testid=boot-examples] button").catch(() => {});
+    await page.waitForTimeout(300);
     await page.waitForSelector("[data-testid=boot-command-input]", { timeout: 20000 });
     await page.waitForTimeout(900);
     await page.screenshot({ path: `${OUT}/${vp.name}-01-boot.png` });

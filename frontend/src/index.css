@@ -32,6 +32,8 @@
 
   html {
     background: #07080a;
+    /* Framer Motion 11 measures scroll progress against <html> and warns if it is position: static */
+    position: relative;
   }
 
   html,

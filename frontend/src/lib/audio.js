@@ -32,7 +32,15 @@ function impulse(c, seconds, decay) {
   return buf;
 }
 
+// Browsers only allow audio after the visitor has clicked, tapped or pressed a key.
+// Hovering doesn't count, so stay silent until then (instead of creating a blocked AudioContext).
+function allowed() {
+  const ua = typeof navigator !== "undefined" ? navigator.userActivation : null;
+  return !ua || ua.hasBeenActive;
+}
+
 function ensure() {
+  if (!allowed()) return null;
   if (!ctx) {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
@@ -148,7 +156,7 @@ export const worldNote = (section) => {
 
 export const whoosh = () => {
   if (muted) return;
-  const c = ensure();
+  const c = ensure(); // null before the first click or tap
   if (!c) return;
   const t0 = c.currentTime;
   const src = c.createBufferSource();
