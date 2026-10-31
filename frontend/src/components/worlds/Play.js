@@ -1,13 +1,23 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { PLAYS, PLAY_QUOTE } from "../../data/content";
 import { useOS } from "../../os/context";
 import { blip, tick } from "../../lib/audio";
+import { matchClock } from "../../lib/clock";
 import SectionHeader from "../SectionHeader";
 
 const EASE = [0.16, 1, 0.3, 1];
+const SHOWN = PLAYS.filter((p) => !p.pending);
 
 export default function Play() {
   const { navigate } = useOS();
+  const [clock, setClock] = useState(() => matchClock());
+
+  // One match-second is about 6.5 real hours, so re-checking once a minute is plenty.
+  useEffect(() => {
+    const t = setInterval(() => setClock(matchClock()), 60000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <section id="play" className="relative py-28 sm:py-36" data-testid="play-world">
@@ -27,9 +37,17 @@ export default function Play() {
             <span className="font-display font-bold text-lg sm:text-2xl text-ink">ENGINEERING</span>
           </div>
           <div className="flex flex-col items-center justify-center gap-1 p-6 sm:p-8">
-            <span className="font-monoos text-[10px] tracking-[0.3em] text-faint">MATCH CLOCK</span>
+            <span className="flex items-center gap-2 font-monoos text-[10px] tracking-[0.3em] text-faint">
+              <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-err" /> LIVE · {clock.half}
+            </span>
             <span className="font-monoos font-bold text-3xl sm:text-5xl text-osc" data-testid="play-match-clock">
-              90<span className="animate-pulse">:</span>00
+              {clock.text.slice(0, 2)}<span className="animate-pulse">:</span>{clock.text.slice(3)}
+            </span>
+            <span className="mt-1 h-[2px] w-24 bg-white/10" aria-hidden="true">
+              <span className="block h-full bg-osc" style={{ width: `${clock.progress * 100}%` }} />
+            </span>
+            <span className="sr-only">
+              The degree is a 90-minute match. It is currently minute {clock.minute}.
             </span>
           </div>
           <div className="flex flex-col items-center justify-center gap-1 p-6 sm:p-8 border-l border-white/10">
@@ -39,7 +57,7 @@ export default function Play() {
         </motion.div>
 
         <div className="mt-16 max-w-3xl border-l border-white/10 pl-6 sm:pl-10 flex flex-col gap-10" data-testid="play-timeline">
-          {PLAYS.map((p, i) => (
+          {SHOWN.map((p, i) => (
             <motion.div
               key={p.title}
               initial={{ opacity: 0, x: -20 }}
@@ -55,6 +73,11 @@ export default function Play() {
             </motion.div>
           ))}
         </div>
+
+        <p className="mt-10 max-w-xl font-monoos text-[10px] leading-relaxed tracking-[0.2em] text-faint">
+          // THE DEGREE AS A 90-MINUTE MATCH: AUG 2024 KICKOFF, JUL 2028 FULL TIME.
+          ONE MATCH-MINUTE IS ABOUT 16 REAL DAYS.
+        </p>
 
         <div className="mt-12 max-w-3xl">
           {PLAY_QUOTE.map((line, i) => (

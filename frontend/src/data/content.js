@@ -109,6 +109,7 @@ export const TECH_CHAINS = [
 
 export const FILTERS = [
   { key: "all", label: "ALL" },
+  { key: "live", label: "LIVE" },
   { key: "ai", label: "AI" },
   { key: "ml", label: "ML" },
   { key: "fullstack", label: "FULL-STACK" },
@@ -116,7 +117,8 @@ export const FILTERS = [
   { key: "systems", label: "SYSTEMS" },
 ];
 
-const PENDING = "Not documented — ask me about it.";
+// Stage text that hasn't been written yet. Stages with this text are hidden on the site.
+export const PENDING = "Not documented — ask me about it.";
 
 export const PROJECTS = [
   { id: "MOD-01", name: "Cache Eviction Visualizer — LRU vs LFU", date: null, chapter: "CH 01 · FUNDAMENTALS", stack: ["Python", "LRU", "LFU", "O(1) get/put"], tags: ["systems"], links: [{ label: "GITHUB", url: "https://github.com/Siddharth-singla/LRU-LFU-CACHE" }],
@@ -231,8 +233,9 @@ export const PLAYS = [
   { min: "PLAY 01", title: "KICKOFF", text: "2024. B.E. Computer Science begins at Thapar Institute, Patiala. The ball leaves the center circle." },
   { min: "PLAY 02", title: "LEARNING", text: "Data structures, operating systems, networks, probability. Coursework reps win matches." },
   { min: "PLAY 03", title: "BUILDING", text: "Feb 2025: first internship. 2026: eight projects and a team product. The game slows down once you understand it." },
-  { min: "PLAY 04", title: "FAILURE", text: "Entry reserved — failure stories available on request." },
-  { min: "PLAY 05", title: "HACKATHONS", text: "Reserved play. Watch this space." },
+  // pending: hidden on the site until real stories are written for them.
+  { min: "PLAY 04", title: "FAILURE", text: "Entry reserved — failure stories available on request.", pending: true },
+  { min: "PLAY 05", title: "HACKATHONS", text: "Reserved play. Watch this space.", pending: true },
   { min: "PLAY 06", title: "EXPERIMENTS", text: "Retrieval strategies, threat detection, meeting intelligence. Some work, all teach." },
   { min: "PLAY 07", title: "NEXT PLAY", text: "Then we play again." },
 ];

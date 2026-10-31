@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, MicOff, X, Send } from "lucide-react";
 import { useOS } from "../os/context";
 import { blip } from "../lib/audio";
+import VoiceWave from "./VoiceWave";
 
 export default function VoiceDock() {
-  const { log, listening, startListening, runCommand, dockOpen, setDockOpen } = useOS();
+  const { log, listening, interim, energy, startListening, runCommand, dockOpen, setDockOpen } = useOS();
   const [text, setText] = useState("");
+  const logRef = useRef(null);
+
+  useEffect(() => {
+    const el = logRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [log, interim]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -32,21 +39,27 @@ export default function VoiceDock() {
                 <X size={13} className="text-dim hover:text-ink" />
               </button>
             </div>
-            <div className="h-56 overflow-y-auto p-4 font-monoos text-xs space-y-2" data-testid="voice-dock-log">
-              {log.length === 0 && <p className="text-faint">// say or type a command</p>}
+            <div ref={logRef} className="h-56 overflow-y-auto p-4 font-monoos text-xs space-y-2" data-testid="voice-dock-log">
+              {log.length === 0 && !listening && <p className="text-faint">// say, type or dictate a command. try "help"</p>}
               {log.map((l) => (
                 <p key={l.id} className={l.role === "user" ? "text-ink" : "text-osc"}>
                   {l.role === "user" ? "> " : ""}
                   {l.text}
                 </p>
               ))}
+              {listening && (
+                <p className="text-ink/60 italic" data-testid="voice-dock-interim">
+                  &gt; {interim || "listening…"}
+                </p>
+              )}
             </div>
+            <VoiceWave active={listening} energy={energy} height={28} className="border-t border-white/5" />
             <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/10 p-3">
               <button
                 type="button"
                 data-testid="voice-dock-mic-button"
-                onClick={startListening}
-                aria-label="Start voice input"
+                onClick={() => startListening()}
+                aria-label={listening ? "Stop listening" : "Start voice input"}
                 className={`h-9 w-9 shrink-0 flex items-center justify-center border transition-colors duration-300 ${
                   listening ? "border-osc bg-osc/20 text-osc animate-pulse" : "border-white/15 text-dim hover:text-osc hover:border-osc/50"
                 }`}
@@ -57,7 +70,8 @@ export default function VoiceDock() {
                 data-testid="voice-dock-input"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder='type: "show me his open source"'
+                placeholder='"show me his open source"'
+                aria-label="Command"
                 className="min-w-0 flex-1 bg-transparent font-monoos text-xs text-ink placeholder:text-faint outline-none"
               />
               <button

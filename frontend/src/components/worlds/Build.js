@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { TECHS, TECH_CHAINS, PROJECTS, FILTERS, EDUCATION, EXPERIENCE, CERTS, ARCHIVE_QUOTE } from "../../data/content";
+import { TECHS, TECH_CHAINS, PROJECTS, FILTERS, EDUCATION, EXPERIENCE, CERTS, ARCHIVE_QUOTE, PENDING } from "../../data/content";
+
+const isLive = (p) => p.links.some((l) => l.label === "LIVE");
 import { useOS } from "../../os/context";
 import { blip, scrollTick, tick } from "../../lib/audio";
 import SectionHeader from "../SectionHeader";
@@ -78,12 +80,14 @@ function ModuleCard({ p, i, total, reduced, coverRef, selfRef }) {
         </div>
 
         <div className="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
-          {p.stages.map(([label, text]) => (
-            <div key={label}>
-              <p className={`font-monoos text-[9px] tracking-[0.25em] ${label === "WHAT I LEARNED" ? "text-osc" : "text-dim"}`}>{label}</p>
-              <p className={`mt-1 text-xs leading-relaxed ${text.startsWith("Not documented") ? "italic text-faint" : "text-dim"}`}>{text}</p>
-            </div>
-          ))}
+          {p.stages
+            .filter(([, text]) => text && text !== PENDING)
+            .map(([label, text]) => (
+              <div key={label}>
+                <p className={`font-monoos text-[9px] tracking-[0.25em] ${label === "WHAT I LEARNED" ? "text-osc" : "text-dim"}`}>{label}</p>
+                <p className="mt-1 text-xs leading-relaxed text-dim">{text}</p>
+              </div>
+            ))}
         </div>
       </motion.div>
     </div>
@@ -104,12 +108,18 @@ export default function BuildWorld() {
 
   useEffect(() => {
     if (projectFilter) {
-      setFilter(projectFilter);
+      // "project:MOD-07" opens one project, so show them all and let the app scroll to it.
+      setFilter(projectFilter.startsWith("project:") ? "all" : projectFilter);
       setProjectFilter(null);
     }
   }, [projectFilter, setProjectFilter]);
 
-  const shown = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.tags.includes(filter));
+  const shown =
+    filter === "all"
+      ? PROJECTS
+      : filter === "live"
+      ? PROJECTS.filter(isLive)
+      : PROJECTS.filter((p) => p.tags.includes(filter));
 
   if (shells.current.length !== shown.length) {
     shells.current = shown.map((_, i) => shells.current[i] || { current: null });
@@ -339,7 +349,7 @@ export default function BuildWorld() {
 
             <div className="pr-5">
               {shown.map((p, i) => (
-                <div key={`${filter}-${p.id}`}>
+                <div key={`${filter}-${p.id}`} id={`module-${p.id.toLowerCase()}`}>
                   <ModuleCard
                     p={p}
                     i={i}
