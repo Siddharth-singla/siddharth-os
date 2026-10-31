@@ -68,14 +68,14 @@ export default function Hero({ booted }) {
       className="relative min-h-screen flex items-start pt-16 overflow-hidden"
       data-testid="hero-section"
     >
-      {/* The hero sits on Charcoal (#312E2E) with a soft neutral light behind the photo.
+      {/* The hero sits on Neon Navy (#131936) with a soft neutral light behind the photo.
           Each later section slides over it on its own tone, so the change marks a new section. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(238,234,230,0.05), transparent 70%)",
+            "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(239,233,223,0.05), transparent 70%)",
         }}
         data-testid="hero-backdrop"
       />

@@ -70,7 +70,7 @@ export default function BuildWorld() {
                 y1="46"
                 x2={p.x}
                 y2={p.y}
-                stroke={hoverTech === p.n ? "rgba(217,204,191,0.75)" : "rgba(238,234,230,0.1)"}
+                stroke={hoverTech === p.n ? "rgba(216,194,156,0.75)" : "rgba(239,233,223,0.1)"}
                 strokeWidth="1"
                 vectorEffect="non-scaling-stroke"
                 style={{ transition: "stroke 0.4s ease" }}

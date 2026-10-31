@@ -89,7 +89,7 @@ export default function VoiceDock() {
       <button
         data-testid="voice-dock-button"
         onClick={() => { blip(); setDockOpen(!dockOpen); }}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-osc text-void shadow-[0_10px_30px_rgba(1,1,1,0.45)] hover:scale-105 active:scale-95 transition-transform duration-200"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-osc text-void shadow-[0_10px_30px_rgba(3,5,14,0.45)] hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label={dockOpen ? "Close voice console" : "Open voice console"}
       >
         <Mic size={18} />

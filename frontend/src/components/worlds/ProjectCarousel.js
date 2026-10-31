@@ -14,7 +14,7 @@ function Card({ p, index, total, clone, focused }) {
       data-testid={clone ? undefined : `build-project-${p.id.toLowerCase()}`}
       aria-hidden={clone ? "true" : undefined}
       className={`relative flex w-[84vw] max-w-[560px] shrink-0 flex-col overflow-hidden rounded-[1.75rem] border bg-panel p-6 sm:w-[520px] sm:p-8 lg:w-[560px] transition-[border-color,box-shadow] duration-500 ${
-        focused ? "border-osc/70 shadow-[0_0_0_1px_rgba(217,204,191,0.3),0_24px_70px_rgba(1,1,1,0.45)]" : "border-ink/15 shadow-[0_24px_70px_rgba(1,1,1,0.35)]"
+        focused ? "border-osc/70 shadow-[0_0_0_1px_rgba(216,194,156,0.3),0_24px_70px_rgba(3,5,14,0.45)]" : "border-ink/15 shadow-[0_24px_70px_rgba(3,5,14,0.35)]"
       }`}
     >
       {/* project number: top-right, with space reserved so nothing sits on top of it */}

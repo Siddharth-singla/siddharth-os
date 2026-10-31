@@ -29,7 +29,7 @@ export default function WorldMap() {
               y1="44"
               x2={wd.pos.x}
               y2={wd.pos.y}
-              stroke={hovered === wd.id ? "rgba(217,204,191,0.75)" : "rgba(238,234,230,0.14)"}
+              stroke={hovered === wd.id ? "rgba(216,194,156,0.75)" : "rgba(239,233,223,0.14)"}
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
               style={{ transition: "stroke 0.4s ease" }}

@@ -35,19 +35,19 @@ const OSS_COUNTS = (() => {
 const GENERIC_IDEA = /^(what|so what|tell me what)?\s*(should|can|could)\s+(i|he|you|siddharth)\s+build( next)?\??$/i;
 
 // Each section slides over the previous one on its own tone (see .tone-* in index.css).
-// The hero is Charcoal; sections then cycle Caviar -> Shadow -> Charcoal, so neighbours always differ.
+// The hero is Neon Navy; sections then cycle Midnight -> Dusk -> Navy, so neighbours always differ.
 // Full class names are written out so Tailwind keeps their CSS (it drops names it cannot find).
 const TONES = [
-  { name: "caviar", cls: "tone-caviar" },
-  { name: "shadow", cls: "tone-shadow" },
-  { name: "charcoal", cls: "tone-charcoal" },
+  { name: "midnight", cls: "tone-midnight" },
+  { name: "dusk", cls: "tone-dusk" },
+  { name: "navy", cls: "tone-navy" },
 ];
 
 function Over({ i, children }) {
   const tone = TONES[i % TONES.length];
   return (
     <div
-      className={`${tone.cls} relative rounded-t-[2rem] sm:rounded-t-[3rem] -mt-7 sm:-mt-12 bg-surface border-t border-ink/[0.07] shadow-[0_-28px_70px_rgba(1,1,1,0.45)]`}
+      className={`${tone.cls} relative rounded-t-[2rem] sm:rounded-t-[3rem] -mt-7 sm:-mt-12 bg-surface border-t border-ink/[0.07] shadow-[0_-28px_70px_rgba(3,5,14,0.5)]`}
       data-tone={tone.name}
     >
       {children}

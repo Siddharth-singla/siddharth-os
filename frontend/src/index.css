@@ -3,17 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-  /* Palette: Caviar #010101 · Charcoal #312E2E · Shadow #4E4949 · Saddle #5C5551 · Mustang #807D7D.
-     One warm hue (about 20-30 degrees) at low saturation, so everything reads as one family.
-     Light tones are derived from the same hue because the palette has none of its own.
-     Contrast was checked with /siddharth-os/palette-check.mjs: all text meets WCAG AA on its surface. */
+  /* Palette: Pantone 20-0142 TPM "Neon Navy" #131936 and the moodboard around it.
+     Navy (hue ~229) carries every background; the warm limestone of the facade (hue ~40, close to
+     navy's complement) carries the content. Secondary text stays cool and low-chroma, so warm means
+     "read this" and cool means "supporting". Roughly 60% navy, 30% ivory text, 10% limestone accent.
+     Contrast was checked with /siddharth-os/palette-check.mjs: every text colour is WCAG AA (4.5:1)
+     or better on every surface and panel. */
   :root {
-    --c-void: 1 1 1; /* Caviar */
-    --c-ink: 238 234 230; /* Bone: primary text */
-    --c-accent: 217 204 191; /* Sand: the single accent */
-    --c-line: 128 125 125; /* Mustang: outlines and rules */
-    --c-warn: 226 202 159;
-    --c-err: 240 194 182;
+    --c-void: 7 10 24; /* Blueberry shadow #070A18: deepest tone */
+    --c-ink: 239 233 223; /* Ivory #EFE9DF: primary text */
+    --c-accent: 216 194 156; /* Limestone #D8C29C: the single accent */
+    --c-line: 72 82 128; /* Dusty navy: outlines and rules */
+    --c-warn: 232 203 142;
+    --c-err: 242 185 174;
     --radius: 0.25rem;
   }
 
@@ -21,23 +23,23 @@
      new surface. Panels sit one step lighter (lighter means raised, on a dark UI), and secondary
      text is retuned per tone to keep its contrast. */
   :root,
-  .tone-charcoal {
-    --c-surface: 49 46 46; /* Charcoal #312E2E: hero */
-    --c-panel: 62 58 58;
-    --c-dim: 195 189 185;
-    --c-faint: 163 158 155;
+  .tone-navy {
+    --c-surface: 19 25 54; /* Neon Navy #131936: hero */
+    --c-panel: 28 35 71;
+    --c-dim: 186 192 217;
+    --c-faint: 149 156 190;
   }
-  .tone-caviar {
-    --c-surface: 1 1 1; /* Caviar #010101 */
-    --c-panel: 28 26 26;
-    --c-dim: 177 171 167;
-    --c-faint: 128 125 125; /* Mustang */
+  .tone-midnight {
+    --c-surface: 8 11 29; /* Midnight #080B1D */
+    --c-panel: 18 23 49;
+    --c-dim: 179 185 211;
+    --c-faint: 137 144 180;
   }
-  .tone-shadow {
-    --c-surface: 78 73 73; /* Shadow #4E4949 */
-    --c-panel: 92 85 81; /* Saddle #5C5551 */
-    --c-dim: 220 214 210;
-    --c-faint: 193 187 183;
+  .tone-dusk {
+    --c-surface: 37 46 92; /* Dusk #252E5C */
+    --c-panel: 48 57 108;
+    --c-dim: 200 205 227;
+    --c-faint: 167 174 205;
   }
 
   * {
@@ -74,12 +76,12 @@
     background: rgb(var(--c-void));
   }
   ::-webkit-scrollbar-thumb {
-    background: rgb(78 73 73); /* Shadow */
+    background: rgb(37 46 92); /* Dusk */
     border: 2px solid rgb(var(--c-void));
     border-radius: 8px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--c-line)); /* Mustang */
+    background: rgb(var(--c-line));
   }
 }
 
