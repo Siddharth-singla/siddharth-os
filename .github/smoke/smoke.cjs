@@ -57,6 +57,11 @@ const COMMANDS = [
     await page.press("[data-testid=boot-command-input]", "Enter");
     await page.waitForTimeout(6500);
     await page.screenshot({ path: `${OUT}/${vp.name}-02-ai-filter.png` });
+    // on phones the console has closed itself by now; the log is kept, so reopen it to read
+    if (!(await page.$("[data-testid=voice-dock-log]"))) {
+      await page.click("[data-testid=voice-dock-button]");
+      await page.waitForTimeout(400);
+    }
     const firstLog = (await page.textContent("[data-testid=voice-dock-log]").catch(() => "")) || "";
     const aiOk = /AI MEETING ASSISTANT/.test(firstLog);
     if (!aiOk) failures++;
