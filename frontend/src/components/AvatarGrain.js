@@ -5,7 +5,7 @@ import avatarSrc from "../assets/avatar-cutout.png";
 
 // the photo cuts off his shoulders at the bottom and right edges; an oval centred on the head
 // keeps all the hair and fades the shoulders out, so no straight edge is ever visible
-const MASK = "radial-gradient(ellipse 62% 80% at 50% 30%, black 62%, transparent 100%)";
+const MASK = "radial-gradient(ellipse 62% 70% at 50% 30%, black 62%, transparent 100%)";
 // the green outline: drop-shadow follows the cut-out's edge, so it traces his hair and shoulders
 const OUTLINE =
   "drop-shadow(0 0 1px rgba(34,197,94,0.95)) drop-shadow(0 0 3px rgba(34,197,94,0.55)) drop-shadow(0 0 18px rgba(34,197,94,0.28))";
