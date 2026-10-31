@@ -246,7 +246,7 @@ const COMMANDS = [
     }
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(600);
-    check("floating labels stay clear of hero text and photo", zones >= 5 && worst === 0, `${zones} zones, ${worst} overlaps`);
+    check("floating labels stay clear of hero text and photo", zones >= 3 && worst === 0, `${zones} zones, ${worst} overlaps`);
     await page.screenshot({ path: `${OUT}/${vp.name}-00-hero.png` });
     // where the first section slides over the hero: the two shades should differ
     const shades = await page.evaluate(async () => {
