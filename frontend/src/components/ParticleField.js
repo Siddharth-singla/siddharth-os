@@ -50,7 +50,7 @@ export default function ParticleField() {
           const b = particles[j];
           const d = Math.hypot(a.x - b.x, a.y - b.y);
           if (d < 130) {
-            ctx.strokeStyle = `rgba(242,240,233,${(1 - d / 130) * 0.09})`;
+            ctx.strokeStyle = `rgba(238,234,230,${(1 - d / 130) * 0.09})`;
             ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y - scroll);
@@ -63,14 +63,14 @@ export default function ParticleField() {
       for (const p of particles) {
         const y = p.y - scroll;
         if (p.label) {
-          ctx.fillStyle = "rgba(34,197,94,0.7)";
+          ctx.fillStyle = "rgba(217,204,191,0.6)";
           ctx.beginPath();
           ctx.arc(p.x, y, 2, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = "rgba(242,240,233,0.42)";
+          ctx.fillStyle = "rgba(238,234,230,0.36)";
           ctx.fillText(p.label.toUpperCase(), p.x + 8, y + 3);
         } else {
-          ctx.fillStyle = "rgba(242,240,233,0.26)";
+          ctx.fillStyle = "rgba(238,234,230,0.22)";
           ctx.beginPath();
           ctx.arc(p.x, y, p.r, 0, Math.PI * 2);
           ctx.fill();

@@ -6,9 +6,9 @@ import avatarSrc from "../assets/avatar-cutout.png";
 // the photo cuts off his shoulders at the bottom and right edges; an oval centred on the head
 // keeps all the hair and fades the shoulders out, so no straight edge is ever visible
 const MASK = "radial-gradient(ellipse 62% 70% at 50% 30%, black 62%, transparent 100%)";
-// the green outline: drop-shadow follows the cut-out's edge, so it traces his hair and shoulders
+// a thin Bone outline that follows the cut-out's edge, plus a soft shadow to lift it off the page
 const OUTLINE =
-  "drop-shadow(0 0 1px rgba(34,197,94,0.95)) drop-shadow(0 0 3px rgba(34,197,94,0.55)) drop-shadow(0 0 18px rgba(34,197,94,0.28))";
+  "drop-shadow(0 0 0.75px rgba(238,234,230,0.55)) drop-shadow(0 18px 28px rgba(1,1,1,0.35))";
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 

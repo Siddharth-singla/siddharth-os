@@ -30,10 +30,10 @@ export default function VoiceDock() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="w-[340px] max-w-[86vw] border border-white/10 bg-panel/95 backdrop-blur-xl"
+            className="w-[340px] max-w-[86vw] border border-ink/10 bg-panel/95 backdrop-blur-xl"
             data-testid="voice-dock-panel"
           >
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-faint">
+            <div className="flex items-center justify-between border-b border-ink/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-faint">
               <span>// VOICE CONSOLE</span>
               <button data-testid="voice-dock-close-button" onClick={() => setDockOpen(false)} aria-label="Close console">
                 <X size={13} className="text-dim hover:text-ink" />
@@ -53,15 +53,15 @@ export default function VoiceDock() {
                 </p>
               )}
             </div>
-            <VoiceWave active={listening} energy={energy} height={28} className="border-t border-white/5" />
-            <form onSubmit={submit} className="flex items-center gap-2 border-t border-white/10 p-3">
+            <VoiceWave active={listening} energy={energy} height={28} className="border-t border-ink/5" />
+            <form onSubmit={submit} className="flex items-center gap-2 border-t border-ink/10 p-3">
               <button
                 type="button"
                 data-testid="voice-dock-mic-button"
                 onClick={() => startListening()}
                 aria-label={listening ? "Stop listening" : "Start voice input"}
                 className={`h-9 w-9 shrink-0 flex items-center justify-center border transition-colors duration-300 ${
-                  listening ? "border-osc bg-osc/20 text-osc animate-pulse" : "border-white/15 text-dim hover:text-osc hover:border-osc/50"
+                  listening ? "border-osc bg-osc/20 text-osc animate-pulse" : "border-ink/15 text-dim hover:text-osc hover:border-osc/50"
                 }`}
               >
                 {listening ? <MicOff size={14} /> : <Mic size={14} />}
@@ -89,7 +89,7 @@ export default function VoiceDock() {
       <button
         data-testid="voice-dock-button"
         onClick={() => { blip(); setDockOpen(!dockOpen); }}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-osc text-void shadow-[0_0_28px_rgba(34,197,94,0.4)] hover:scale-105 active:scale-95 transition-transform duration-200"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-osc text-void shadow-[0_10px_30px_rgba(1,1,1,0.45)] hover:scale-105 active:scale-95 transition-transform duration-200"
         aria-label={dockOpen ? "Close voice console" : "Open voice console"}
       >
         <Mic size={18} />

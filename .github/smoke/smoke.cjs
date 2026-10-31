@@ -222,9 +222,31 @@ const COMMANDS = [
       return {
         hero: getComputedStyle(document.querySelector("[data-testid=hero-backdrop]")).backgroundImage.slice(0, 60),
         sheet: getComputedStyle(about).backgroundColor,
+        page: getComputedStyle(document.body).backgroundColor,
       };
     });
-    check("hero shade differs from the next section", /gradient/.test(shades.hero) && /7, 8, 10/.test(shades.sheet), shades.sheet);
+    check("hero shade differs from the next section", /gradient/.test(shades.hero) && shades.sheet !== shades.page, `hero ${shades.page} -> next ${shades.sheet}`);
+    // every section sheet differs in colour from the one before it (and the first from the hero)
+    const tones = await page.evaluate(() => {
+      const bg = (el) => getComputedStyle(el).backgroundColor;
+      const sheets = [...document.querySelectorAll("main > [data-tone]")];
+      const seq = [bg(document.body), ...sheets.map(bg)];
+      const same = seq.findIndex((c, i) => i > 0 && c === seq[i - 1]);
+      return { n: sheets.length, same, seq: seq.slice(0, 5).join(" | ") };
+    });
+    check("each section has its own shade", tones.n >= 10 && tones.same === -1, `${tones.n} sheets; ${tones.seq}`);
+    // the old neon green must be gone from text, backgrounds and borders
+    const green = await page.evaluate(() => {
+      const hits = new Set();
+      for (const el of document.querySelectorAll("body *")) {
+        const cs = getComputedStyle(el);
+        for (const p of ["color", "backgroundColor", "borderTopColor", "fill", "stroke"]) {
+          if (/rgba?\(34, 197, 94/.test(cs[p])) hits.add(`${el.tagName.toLowerCase()}.${p}`);
+        }
+      }
+      return [...hits];
+    });
+    check("no neon green left", green.length === 0, green.slice(0, 5).join(", "));
     await page.screenshot({ path: `${OUT}/${vp.name}-00b-hero-to-next.png` });
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);

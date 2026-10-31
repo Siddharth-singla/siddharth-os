@@ -102,7 +102,7 @@ export default function Boot({ onEnter }) {
               <form
                 onSubmit={submit}
                 className={`mt-5 border bg-panel/80 transition-colors duration-300 ${
-                  listening ? "border-osc/70" : "border-white/15 focus-within:border-osc/50"
+                  listening ? "border-osc/70" : "border-ink/15 focus-within:border-osc/50"
                 }`}
               >
                 <div className="flex items-center gap-2 px-3 py-2">
@@ -123,7 +123,7 @@ export default function Boot({ onEnter }) {
                       onClick={() => startListening((said) => enter(said))}
                       aria-label={listening ? "Stop listening" : "Speak your question"}
                       className={`h-9 w-9 shrink-0 flex items-center justify-center rounded-full border transition-colors duration-300 ${
-                        listening ? "border-osc bg-osc/20 text-osc" : "border-white/20 text-dim hover:text-osc hover:border-osc/60"
+                        listening ? "border-osc bg-osc/20 text-osc" : "border-ink/20 text-dim hover:text-osc hover:border-osc/60"
                       }`}
                     >
                       {listening ? <MicOff size={15} /> : <Mic size={15} />}
@@ -137,7 +137,7 @@ export default function Boot({ onEnter }) {
                     <CornerDownLeft size={14} />
                   </button>
                 </div>
-                <VoiceWave active={listening} energy={energy} height={34} className="border-t border-white/5" />
+                <VoiceWave active={listening} energy={energy} height={34} className="border-t border-ink/5" />
               </form>
               <p className="mt-2 text-[10px] tracking-[0.12em] text-faint" data-testid="boot-dictation-hint">
                 {listening ? "LISTENING…" : hint}
@@ -150,7 +150,7 @@ export default function Boot({ onEnter }) {
                     type="button"
                     onClick={() => enter(ex)}
                     onMouseEnter={() => tick()}
-                    className="border border-white/10 px-3 py-1.5 text-[11px] text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
+                    className="border border-ink/10 px-3 py-1.5 text-[11px] text-dim hover:text-ink hover:border-osc/50 transition-colors duration-300"
                   >
                     "{ex}"
                   </button>

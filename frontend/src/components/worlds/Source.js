@@ -39,10 +39,10 @@ export default function Source() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.6, ease: EASE, delay: ri * 0.08 }}
-                className="border border-white/10 bg-panel/50"
+                className="border border-ink/10 bg-panel/50"
                 data-testid={`oss-repo-${repo.repo.split("/")[1]}`}
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-white/10 px-5 sm:px-6 py-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 px-5 sm:px-6 py-4">
                   <div className="flex items-baseline gap-3">
                     <span className="font-monoos text-sm font-bold text-ink">{repo.repo}</span>
                     {repo.desc && <span className="font-monoos text-[10px] text-faint">— {repo.desc}</span>}
@@ -64,7 +64,7 @@ export default function Source() {
                       viewport={{ once: true, amount: 0.2 }}
                       transition={{ duration: 0.45, ease: EASE, delay: pi * 0.05 }}
                       onMouseEnter={() => tick()}
-                      className="group flex items-center gap-3 border-b border-white/5 px-5 sm:px-6 py-3.5 last:border-b-0 hover:bg-white/[0.03] transition-colors duration-300"
+                      className="group flex items-center gap-3 border-b border-ink/5 px-5 sm:px-6 py-3.5 last:border-b-0 hover:bg-ink/[0.03] transition-colors duration-300"
                     >
                       {pr.state === "MERGED" ? (
                         <GitMerge size={13} className="shrink-0 text-osc" />

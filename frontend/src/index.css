@@ -3,35 +3,49 @@
 @tailwind utilities;
 
 @layer base {
+  /* Palette: Caviar #010101 · Charcoal #312E2E · Shadow #4E4949 · Saddle #5C5551 · Mustang #807D7D.
+     One warm hue (about 20-30 degrees) at low saturation, so everything reads as one family.
+     Light tones are derived from the same hue because the palette has none of its own.
+     Contrast was checked with /siddharth-os/palette-check.mjs: all text meets WCAG AA on its surface. */
   :root {
-    --background: 240 9% 3%;
-    --foreground: 45 25% 93%;
-    --card: 222 16% 7%;
-    --card-foreground: 45 25% 93%;
-    --popover: 222 16% 7%;
-    --popover-foreground: 45 25% 93%;
-    --primary: 142 71% 45%;
-    --primary-foreground: 240 9% 3%;
-    --secondary: 222 16% 10%;
-    --secondary-foreground: 45 25% 93%;
-    --muted: 222 16% 10%;
-    --muted-foreground: 45 8% 60%;
-    --accent: 222 16% 10%;
-    --accent-foreground: 45 25% 93%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 100% / 0.08;
-    --input: 0 0% 100% / 0.08;
-    --ring: 142 71% 45%;
+    --c-void: 1 1 1; /* Caviar */
+    --c-ink: 238 234 230; /* Bone: primary text */
+    --c-accent: 217 204 191; /* Sand: the single accent */
+    --c-line: 128 125 125; /* Mustang: outlines and rules */
+    --c-warn: 226 202 159;
+    --c-err: 240 194 182;
     --radius: 0.25rem;
   }
 
+  /* Section tones. Each sheet that slides over the hero takes one, so every new section reads as a
+     new surface. Panels sit one step lighter (lighter means raised, on a dark UI), and secondary
+     text is retuned per tone to keep its contrast. */
+  :root,
+  .tone-charcoal {
+    --c-surface: 49 46 46; /* Charcoal #312E2E: hero */
+    --c-panel: 62 58 58;
+    --c-dim: 195 189 185;
+    --c-faint: 163 158 155;
+  }
+  .tone-caviar {
+    --c-surface: 1 1 1; /* Caviar #010101 */
+    --c-panel: 28 26 26;
+    --c-dim: 177 171 167;
+    --c-faint: 128 125 125; /* Mustang */
+  }
+  .tone-shadow {
+    --c-surface: 78 73 73; /* Shadow #4E4949 */
+    --c-panel: 92 85 81; /* Saddle #5C5551 */
+    --c-dim: 220 214 210;
+    --c-faint: 193 187 183;
+  }
+
   * {
-    border-color: hsl(var(--border));
+    border-color: rgb(var(--c-ink) / 0.08);
   }
 
   html {
-    background: #07080a;
+    background: rgb(var(--c-surface));
     /* Framer Motion 11 measures scroll progress against <html> and warns if it is position: static */
     position: relative;
   }
@@ -44,28 +58,28 @@
   }
 
   body {
-    @apply bg-[#07080A] text-[#F2F0E9] antialiased;
+    @apply bg-surface text-ink antialiased;
     font-family: "Inter", sans-serif;
   }
 
   ::selection {
-    background: rgba(34, 197, 94, 0.85);
-    color: #07080a;
+    background: rgb(var(--c-accent) / 0.9);
+    color: rgb(var(--c-void));
   }
 
   ::-webkit-scrollbar {
     width: 9px;
   }
   ::-webkit-scrollbar-track {
-    background: #07080a;
+    background: rgb(var(--c-void));
   }
   ::-webkit-scrollbar-thumb {
-    background: #1d232c;
-    border: 2px solid #07080a;
+    background: rgb(78 73 73); /* Shadow */
+    border: 2px solid rgb(var(--c-void));
     border-radius: 8px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #22c55e;
+    background: rgb(var(--c-line)); /* Mustang */
   }
 }
 
@@ -87,14 +101,14 @@
     height: 200%;
     pointer-events: none;
     z-index: 70;
-    opacity: 0.08;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05; /* monochrome film grain: texture without colour noise */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: grain-shift 9s steps(6) infinite;
   }
 
   .fine-grid {
-    background-image: linear-gradient(to right, rgba(242, 240, 233, 0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(242, 240, 233, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(var(--c-ink) / 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--c-ink) / 0.03) 1px, transparent 1px);
     background-size: 28px 28px;
   }
 
@@ -106,14 +120,14 @@
   }
 
   .text-outline {
-    -webkit-text-stroke: 1px rgba(242, 240, 233, 0.28);
+    -webkit-text-stroke: 1px rgb(var(--c-ink) / 0.24);
     color: transparent;
   }
 
   .blink-caret::after {
     content: "▌";
     margin-left: 2px;
-    color: #22c55e;
+    color: rgb(var(--c-accent));
     animation: caret-blink 1s steps(2) infinite;
   }
 
@@ -146,8 +160,8 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-  50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
 @keyframes flicker {

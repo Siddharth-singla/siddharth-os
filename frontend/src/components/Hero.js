@@ -68,16 +68,14 @@ export default function Hero({ booted }) {
       className="relative min-h-screen flex items-start pt-16 overflow-hidden"
       data-testid="hero-section"
     >
-      {/* The hero sits on a slightly lighter slate, with a faint green glow behind the photo.
-          Every later section slides over it on the darker base colour (bg-void), so the change
-          of shade marks where a new section opens. Semi-transparent so the particles still show. */}
+      {/* The hero sits on Charcoal (#312E2E) with a soft neutral light behind the photo.
+          Each later section slides over it on its own tone, so the change marks a new section. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(34,197,94,0.08), transparent 70%), " +
-            "linear-gradient(to bottom, rgba(30,36,43,0.62), rgba(24,29,35,0.62))",
+            "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(238,234,230,0.05), transparent 70%)",
         }}
         data-testid="hero-backdrop"
       />
@@ -162,12 +160,12 @@ export default function Hero({ booted }) {
               transition={{ duration: 0.8, ease: EASE, delay: 1.4 }}
               className="mt-12 w-full max-w-md text-left"
             >
-              <div className="border border-white/10 bg-panel/70 backdrop-blur-sm" data-testid="hero-process-panel">
-                <div className="flex items-center justify-between border-b border-white/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-faint">
+              <div className="border border-ink/10 bg-panel/70 backdrop-blur-sm" data-testid="hero-process-panel">
+                <div className="flex items-center justify-between border-b border-ink/10 px-4 py-2 font-monoos text-[10px] tracking-[0.25em] text-faint">
                   <span>TASKLIST</span>
                   <span>6 PROCESSES</span>
                 </div>
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-ink/5">
                   {PROCESSES.map((p, i) => (
                     <motion.div
                       key={p}

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 // (speech start, each partial transcript), so the wave swells as you talk and
 // settles when you stop. It never opens a second microphone stream, because
 // some phones refuse to share the mic between this and speech recognition.
-export default function VoiceWave({ active, energy = 0, height = 56, className = "", color = "34,197,94" }) {
+export default function VoiceWave({ active, energy = 0, height = 56, className = "", color = "217,204,191" }) {
   const ref = useRef(null);
   const boxRef = useRef(null);
   const amp = useRef(0.06);

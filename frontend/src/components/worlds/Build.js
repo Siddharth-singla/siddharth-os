@@ -58,7 +58,7 @@ export default function BuildWorld() {
 
         {/* desktop node graph */}
         <div
-          className="relative hidden md:block h-[560px] border border-white/10 bg-panel/40"
+          className="relative hidden md:block h-[560px] border border-ink/10 bg-panel/40"
           data-testid="build-tech-graph"
           onMouseLeave={() => setHoverTech(null)}
         >
@@ -70,7 +70,7 @@ export default function BuildWorld() {
                 y1="46"
                 x2={p.x}
                 y2={p.y}
-                stroke={hoverTech === p.n ? "rgba(34,197,94,0.7)" : "rgba(242,240,233,0.1)"}
+                stroke={hoverTech === p.n ? "rgba(217,204,191,0.75)" : "rgba(238,234,230,0.1)"}
                 strokeWidth="1"
                 vectorEffect="non-scaling-stroke"
                 style={{ transition: "stroke 0.4s ease" }}
@@ -94,7 +94,7 @@ export default function BuildWorld() {
               className={`absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border px-2 py-1 font-monoos text-[10px] transition-colors duration-300 ${
                 hoverTech === p.n
                   ? "border-osc bg-osc/15 text-osc z-10"
-                  : "border-white/15 bg-void/80 text-dim hover:text-ink"
+                  : "border-ink/15 bg-surface/80 text-dim hover:text-ink"
               }`}
               style={{ left: `${p.x}%`, top: `${p.y}%` }}
             >
@@ -102,7 +102,7 @@ export default function BuildWorld() {
             </motion.button>
           ))}
           {hoverTech && (
-            <div className="absolute bottom-3 left-3 max-w-md border border-white/10 bg-void/95 px-4 py-3 font-monoos text-[10px] text-dim" data-testid="build-tech-tooltip">
+            <div className="absolute bottom-3 left-3 max-w-md border border-ink/10 bg-panel/95 px-4 py-3 font-monoos text-[10px] text-dim" data-testid="build-tech-tooltip">
               {(() => {
                 const t = TECHS.find((x) => x.n === hoverTech);
                 return t && t.projects.length
@@ -116,7 +116,7 @@ export default function BuildWorld() {
         {/* mobile stack cloud */}
         <div className="md:hidden flex flex-wrap gap-2" data-testid="build-tech-cloud">
           {TECHS.map((t) => (
-            <span key={t.n} className="border border-white/15 bg-panel/60 px-3 py-1.5 font-monoos text-[11px] text-dim">
+            <span key={t.n} className="border border-ink/15 bg-panel/60 px-3 py-1.5 font-monoos text-[11px] text-dim">
               {t.n}
             </span>
           ))}
@@ -131,7 +131,7 @@ export default function BuildWorld() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="border border-white/10 bg-panel/50 p-6"
+              className="border border-ink/10 bg-panel/50 p-6"
               data-testid="credential-education"
             >
               <p className="font-monoos text-[10px] tracking-[0.3em] text-faint">CH 01 · EDUCATION</p>
@@ -142,7 +142,7 @@ export default function BuildWorld() {
               </p>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {EDUCATION.coursework.map((c) => (
-                  <span key={c} className="border border-white/10 px-2 py-0.5 font-monoos text-[9px] text-dim">{c}</span>
+                  <span key={c} className="border border-ink/10 px-2 py-0.5 font-monoos text-[9px] text-dim">{c}</span>
                 ))}
               </div>
             </motion.div>
@@ -169,7 +169,7 @@ export default function BuildWorld() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6, ease: EASE, delay: 0.16 }}
-              className="border border-white/10 bg-panel/50 p-6"
+              className="border border-ink/10 bg-panel/50 p-6"
               data-testid="credential-certifications"
             >
               <p className="font-monoos text-[10px] tracking-[0.3em] text-faint">CERTIFICATIONS</p>
@@ -199,13 +199,13 @@ export default function BuildWorld() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6, ease: EASE, delay: ci * 0.06 }}
-                className="border border-white/10 bg-panel/50 p-6"
+                className="border border-ink/10 bg-panel/50 p-6"
               >
                 {c.chain.map((node, i) => (
                   <div key={node} className="flex items-center gap-3">
                     <div className="flex flex-col items-center">
                       <span className={`h-1.5 w-1.5 rounded-full ${i === c.chain.length - 1 ? "bg-osc" : "bg-dim"}`} />
-                      {i < c.chain.length - 1 && <span className="h-6 w-px bg-gradient-to-b from-osc/50 to-white/10" />}
+                      {i < c.chain.length - 1 && <span className="h-6 w-px bg-gradient-to-b from-osc/50 to-ink/10" />}
                     </div>
                     <span className={`font-monoos text-xs tracking-[0.15em] ${i === c.chain.length - 1 ? "text-osc font-bold" : "text-ink"}`}>
                       {node}
@@ -227,7 +227,7 @@ export default function BuildWorld() {
                 data-testid={`build-filter-${f.key}`}
                 onClick={() => { blip(); setFocus(null); setFilter(f.key); }}
                 className={`border px-3 py-1.5 font-monoos text-[10px] tracking-[0.2em] transition-colors duration-300 ${
-                  filter === f.key ? "border-osc bg-osc/15 text-osc" : "border-white/15 text-dim hover:text-ink"
+                  filter === f.key ? "border-osc bg-osc/15 text-osc" : "border-ink/15 text-dim hover:text-ink"
                 }`}
               >
                 {f.label}
@@ -267,7 +267,7 @@ export default function BuildWorld() {
             data-testid="build-to-lab-button"
             onClick={() => navigate("lab", "LAB.EXE")}
             onMouseEnter={() => tick()}
-            className="border border-white/15 px-6 py-3 font-monoos text-[11px] tracking-[0.3em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
+            className="border border-ink/15 px-6 py-3 font-monoos text-[11px] tracking-[0.3em] text-dim hover:text-osc hover:border-osc/60 transition-colors duration-300"
           >
             NEXT WORLD: LAB →
           </button>
