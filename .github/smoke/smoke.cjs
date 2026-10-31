@@ -142,11 +142,16 @@ const COMMANDS = [
       for (const card of document.querySelectorAll("article[data-testid^=build-project-]")) {
         const c = card.getBoundingClientRect();
         const num = card.querySelector("span[aria-hidden=true]").getBoundingClientRect();
-        for (const a of card.querySelectorAll("a")) {
+        const links = [...card.querySelectorAll("a")];
+        if (!links.length) continue;
+        // the group of buttons must sit at the bottom right
+        const g = links[0].parentElement.getBoundingClientRect();
+        if (!(c.bottom - g.bottom < 60 && c.right - g.right < 60)) out.push(`${card.dataset.id}: buttons not bottom-right`);
+        // and no button may cover the project number
+        for (const a of links) {
           const r = a.getBoundingClientRect();
           const overlapsNum = !(r.right < num.left || r.left > num.right || r.bottom < num.top || r.top > num.bottom);
-          const bottomRight = c.bottom - r.bottom < 60 && c.right - r.right < 60;
-          if (overlapsNum || !bottomRight) out.push(`${card.dataset.id}:${a.textContent.trim()}${overlapsNum ? " overlaps number" : ""}${bottomRight ? "" : " not bottom-right"}`);
+          if (overlapsNum) out.push(`${card.dataset.id}:${a.textContent.trim()} overlaps number`);
         }
       }
       return out;

@@ -232,7 +232,8 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
     pause(9000);
     glide(to, 900);
     setHighlight(focusId);
-    const t = setTimeout(() => setHighlight(null), 4000);
+    // long enough to still be lit after the page has scrolled down to the carousel
+    const t = setTimeout(() => setHighlight(null), 8000);
     return () => clearTimeout(t);
     // runs only when a new focus request arrives
   }, [focus]);
