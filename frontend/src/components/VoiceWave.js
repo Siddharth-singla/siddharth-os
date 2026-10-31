@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 // some phones refuse to share the mic between this and speech recognition.
 export default function VoiceWave({ active, energy = 0, height = 56, className = "", color = "34,197,94" }) {
   const ref = useRef(null);
+  const boxRef = useRef(null);
   const amp = useRef(0.06);
   const target = useRef(0.06);
   const lastEnergy = useRef(energy);
@@ -26,7 +27,8 @@ export default function VoiceWave({ active, energy = 0, height = 56, className =
 
   useEffect(() => {
     const canvas = ref.current;
-    if (!canvas) return;
+    const box = boxRef.current;
+    if (!canvas || !box) return;
     const g = canvas.getContext("2d");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
@@ -34,17 +36,19 @@ export default function VoiceWave({ active, energy = 0, height = 56, className =
     let h = 0;
     let dpr = 1;
 
+    // Measure the wrapper, not the canvas. The canvas is absolutely positioned, so
+    // its pixel size can never feed back into the layout width.
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth;
-      h = canvas.clientHeight;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
+      w = box.clientWidth;
+      h = box.clientHeight;
+      canvas.width = Math.max(1, Math.round(w * dpr));
+      canvas.height = Math.max(1, Math.round(h * dpr));
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
     const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    ro.observe(box);
 
     const draw = (time) => {
       const t = time / 1000;
@@ -87,5 +91,9 @@ export default function VoiceWave({ active, energy = 0, height = 56, className =
     };
   }, [color]);
 
-  return <canvas ref={ref} aria-hidden="true" className={`block w-full ${className}`} style={{ height }} />;
+  return (
+    <div ref={boxRef} aria-hidden="true" className={`relative w-full min-w-0 overflow-hidden ${className}`} style={{ height }}>
+      <canvas ref={ref} className="absolute inset-0 h-full w-full" />
+    </div>
+  );
 }

@@ -69,7 +69,7 @@ export default function Boot({ onEnter }) {
       onClick={() => setCount(LINES.length)}
     >
       <div className="min-h-full flex items-center justify-center px-5 py-12">
-        <div className="w-full max-w-xl font-monoos text-xs sm:text-sm leading-7 text-dim">
+        <div className="w-full min-w-0 max-w-xl font-monoos text-xs sm:text-sm leading-7 text-dim">
           {LINES.slice(0, count).map((line, i) => (
             <motion.div
               key={line}

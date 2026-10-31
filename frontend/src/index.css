@@ -34,10 +34,16 @@
     background: #07080a;
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+    /* clip (where supported) also stops scripts from scrolling the page sideways */
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-[#07080A] text-[#F2F0E9] antialiased;
     font-family: "Inter", sans-serif;
-    overflow-x: hidden;
   }
 
   ::selection {

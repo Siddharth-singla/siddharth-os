@@ -135,9 +135,12 @@ function App() {
       reply.forEach((line, i) => setTimeout(() => pushLog("system", line), 350 + i * 280));
       if (cmd.filter) setProjectFilter(cmd.filter);
       if (cmd.section) {
-        const target = cmd.filter && cmd.filter.startsWith("project:")
+        // A filter lands on the project cards; a named project lands on its own card.
+        const target = !cmd.filter
+          ? cmd.section
+          : cmd.filter.startsWith("project:")
           ? `module-${cmd.filter.slice(8).toLowerCase()}`
-          : cmd.section;
+          : "modules";
         setTimeout(() => navigate(target, cmd.label), 900 + reply.length * 280);
       }
     },

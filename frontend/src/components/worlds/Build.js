@@ -25,7 +25,9 @@ const POS = RINGS.flatMap(({ items, r, start }) =>
 
 function ModuleCard({ p, i, total, reduced, coverRef, selfRef }) {
   const { scrollYProgress: coverP } = useScroll(
-    coverRef ? { target: coverRef, offset: ["start 0.95", "start 0.3"] } : {}
+    // The card only dims once the next card has covered most of the screen,
+    // so a card you jump to (e.g. "tell me about savoury") arrives at full brightness.
+    coverRef ? { target: coverRef, offset: ["start 0.6", "start 0.15"] } : {}
   );
   const scale = useTransform(coverP, [0, 1], [1, 0.94]);
   const dim = useTransform(coverP, [0, 1], [1, 0.45]);
@@ -337,7 +339,7 @@ export default function BuildWorld() {
             // SYSTEM MODULES — EACH CARD STACKS UP AND SCALES BACK AS THE NEXT ONE ARRIVES.
           </p>
 
-          <div ref={stackRef} className="relative mt-8" data-testid="build-card-stack">
+          <div ref={stackRef} id="modules" className="relative mt-8 scroll-mt-28" data-testid="build-card-stack">
             {/* side progress rail */}
             <div className="absolute right-0 top-6 bottom-0 w-[3px] bg-white/5" aria-hidden="true">
               <motion.div

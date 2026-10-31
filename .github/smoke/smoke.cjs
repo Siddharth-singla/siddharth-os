@@ -45,6 +45,13 @@ const COMMANDS = [
     await page.waitForSelector("[data-testid=boot-command-input]", { timeout: 20000 });
     await page.waitForTimeout(900);
     await page.screenshot({ path: `${OUT}/${vp.name}-01-boot.png` });
+    const bootBox = await page.evaluate(() => {
+      const r = document.querySelector("[data-testid=boot-command-input]").closest("form").getBoundingClientRect();
+      return { left: Math.round(r.left), right: Math.round(r.right), vw: window.innerWidth };
+    });
+    const bootOk = bootBox.right <= bootBox.vw;
+    if (!bootOk) failures++;
+    report.push(`${vp.name} | boot input fits screen | ${bootOk ? "OK" : `FAIL right=${bootBox.right} vw=${bootBox.vw}`}`);
 
     await page.fill("[data-testid=boot-command-input]", "show me his AI work");
     await page.press("[data-testid=boot-command-input]", "Enter");
@@ -78,8 +85,36 @@ const COMMANDS = [
     const hiddenPending = await page.evaluate(() => document.body.innerText.includes("Not documented"));
     if (hiddenPending) failures++;
     report.push(`${vp.name} | "Not documented" placeholders hidden | ${hiddenPending ? "FAIL" : "OK"}`);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-    report.push(`${vp.name} | horizontal overflow | ${overflow > 1 ? overflow + "px" : "none"}`);
+    // Sideways overflow: the page itself shifted, or any visible element sticking out past the screen
+    // (ignoring elements inside containers that are meant to scroll or clip sideways).
+    const overflow = await page.evaluate(() => {
+      const vw = window.innerWidth;
+      const shifted = window.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft;
+      const clipped = (el) => {
+        for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+          const s = getComputedStyle(p);
+          if (/(auto|scroll|hidden|clip)/.test(s.overflowX)) {
+            const r = p.getBoundingClientRect();
+            if (r.right <= vw + 1) return true;
+          }
+        }
+        return false;
+      };
+      const wide = [];
+      for (const el of document.querySelectorAll("body *")) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        if (getComputedStyle(el).position === "fixed" && r.left >= 0 && r.right <= vw + 1) continue;
+        if (r.right > vw + 2 && !clipped(el)) wide.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}(${Math.round(r.right)}px)`);
+        if (wide.length > 5) break;
+      }
+      return { shifted, wide };
+    });
+    const overflowBad = overflow.shifted > 0 || overflow.wide.length > 0;
+    if (overflowBad) failures++;
+    report.push(
+      `${vp.name} | sideways overflow | ${overflowBad ? `FAIL scrollX=${overflow.shifted} ${overflow.wide.join(", ")}` : "none"}`
+    );
 
     report.push(`${vp.name} | errors | ${errors.length ? errors.slice(0, 8).join(" ;; ") : "none"}`);
     if (errors.length) failures++;
