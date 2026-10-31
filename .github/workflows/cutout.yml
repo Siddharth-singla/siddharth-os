@@ -1,0 +1,23 @@
+name: avatar-cutout
+
+# One-off job: remove the photo background. Delete this file once the cut-out is committed.
+on:
+  push:
+    branches: [voice-first]
+    paths: [".github/cutout/**", ".github/workflows/cutout.yml"]
+
+jobs:
+  cutout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install "rembg[cpu]" pillow
+      - run: python .github/cutout/cutout.py birefnet-portrait isnet-general-use u2net_human_seg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cutout
+          path: cutout-out
