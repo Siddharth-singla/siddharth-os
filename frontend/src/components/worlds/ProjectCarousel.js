@@ -234,8 +234,7 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
     setHighlight(focusId);
     const t = setTimeout(() => setHighlight(null), 4000);
     return () => clearTimeout(t);
-    // run only when a new focus request arrives
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // runs only when a new focus request arrives
   }, [focus]);
 
   // the visitor scrolled the track themselves (trackpad, touch, keyboard)
