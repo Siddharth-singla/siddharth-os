@@ -49,7 +49,7 @@ export default function SystemBar() {
       <div className="backdrop-blur-md bg-void/70 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-11 flex items-center justify-between font-monoos text-[11px] tracking-[0.2em]">
           <div className="flex items-center gap-3">
-            <img src="/favicon.svg" className="h-5 w-5" alt="SIDDHARTH.OS mark" />
+            <img src={`${process.env.PUBLIC_URL}/favicon.svg`} className="h-5 w-5" alt="SIDDHARTH.OS mark" />
             <span className="text-ink font-bold">SIDDHARTH.OS</span>
             <span className="hidden sm:inline text-osc" data-testid="system-online-badge">
               ● {operator ? "OPERATOR" : "ONLINE"}
