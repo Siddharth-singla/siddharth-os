@@ -64,25 +64,35 @@ const COMMANDS = [
 
     let n = 3;
     for (const [cmd, label, expect] of COMMANDS) {
+      // on phones the console closes itself after navigating, so reopen it if needed
+      if (!(await page.$("[data-testid=voice-dock-input]"))) {
+        await page.click("[data-testid=voice-dock-button]");
+        await page.waitForTimeout(400);
+      }
       await page.fill("[data-testid=voice-dock-input]", cmd);
       await page.press("[data-testid=voice-dock-input]", "Enter");
-      await page.waitForTimeout(4200);
+      await page.waitForTimeout(2600);
       const log = (await page.textContent("[data-testid=voice-dock-log]").catch(() => "")) || "";
       const ok = log.includes(expect);
+      await page.waitForTimeout(1600);
       if (!ok) failures++;
       const y = await page.evaluate(() => Math.round(window.scrollY));
       report.push(`${vp.name} | "${cmd}" | ${ok ? "OK" : "FAIL (expected " + expect + ")"} | scrollY=${y}`);
-      // close the console so it doesn't cover the screenshot, then reopen for the next command
-      await page.click("[data-testid=voice-dock-close-button]").catch(() => {});
+      // close the console so it doesn't cover the screenshot
+      if (await page.$("[data-testid=voice-dock-close-button]")) {
+        await page.click("[data-testid=voice-dock-close-button]").catch(() => {});
+      }
       await page.waitForTimeout(500);
       await page.screenshot({ path: `${OUT}/${vp.name}-${String(n++).padStart(2, "0")}-${label}.png` });
-      await page.click("[data-testid=voice-dock-button]").catch(() => {});
-      await page.waitForTimeout(400);
     }
 
     const clock = await page.textContent("[data-testid=play-match-clock]").catch(() => "?");
     report.push(`${vp.name} | match clock | ${clock}`);
     // A project card you jump to must not be dimmed.
+    if (!(await page.$("[data-testid=voice-dock-input]"))) {
+      await page.click("[data-testid=voice-dock-button]");
+      await page.waitForTimeout(400);
+    }
     await page.fill("[data-testid=voice-dock-input]", "tell me about savoury");
     await page.press("[data-testid=voice-dock-input]", "Enter");
     await page.waitForTimeout(4200);

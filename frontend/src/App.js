@@ -141,7 +141,12 @@ function App() {
           : cmd.filter.startsWith("project:")
           ? `module-${cmd.filter.slice(8).toLowerCase()}`
           : "modules";
-        setTimeout(() => navigate(target, cmd.label), 900 + reply.length * 280);
+        const navAt = 900 + reply.length * 280;
+        setTimeout(() => navigate(target, cmd.label), navAt);
+        // On phones the console covers half the screen; tuck it away once the page has moved.
+        if (window.matchMedia("(max-width: 640px)").matches) {
+          setTimeout(() => setDockOpen(false), navAt + 2200);
+        }
       }
     },
     [navigate, pushLog, operator]
