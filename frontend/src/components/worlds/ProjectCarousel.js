@@ -346,7 +346,7 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
         onPointerCancel={onPointerUp}
         onClickCapture={onClickCapture}
         onKeyDown={onKeyDown}
-        className="no-scrollbar -mx-4 flex select-none items-stretch gap-5 overflow-x-auto px-4 pb-6 pt-2 outline-none sm:-mx-6 sm:px-6 cursor-grab active:cursor-grabbing focus-visible:ring-1 focus-visible:ring-osc/50 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]"
+        className="no-scrollbar relative -mx-4 flex select-none items-stretch gap-5 overflow-x-auto px-4 pb-6 pt-2 outline-none sm:-mx-6 sm:px-6 cursor-grab active:cursor-grabbing focus-visible:ring-1 focus-visible:ring-osc/50 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]"
       >
         {sets.map((c) =>
           projects.map((p, i) => (
@@ -356,7 +356,7 @@ export default function ProjectCarousel({ projects, focus, reduced }) {
               index={i}
               total={n}
               clone={loop && c !== 1}
-              focused={highlight === p.id && (!loop || c === 1)}
+              focused={highlight === p.id}
             />
           ))
         )}

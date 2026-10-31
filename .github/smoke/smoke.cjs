@@ -121,17 +121,25 @@ const COMMANDS = [
     await page.press("[data-testid=voice-dock-input]", "Enter");
     await page.waitForTimeout(5200);
     await closeDock();
+    // the carousel holds several identical copies so it can loop; any copy of the card counts
     const sav = await page.evaluate(() => {
-      const r = document.querySelector("[data-testid=build-project-mod-07]").getBoundingClientRect();
-      return { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom), vw: innerWidth, vh: innerHeight };
+      const all = [...document.querySelectorAll("article[data-id=MOD-07]")].map((el) => {
+        const r = el.getBoundingClientRect();
+        return { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom) };
+      });
+      const onScreen = all.find((r) => r.l >= -2 && r.r <= innerWidth + 2 && r.t < innerHeight && r.b > 0);
+      const centred = onScreen && Math.abs((onScreen.l + onScreen.r) / 2 - innerWidth / 2) < 40;
+      const lit = [...document.querySelectorAll("article[data-id=MOD-07]")].some((el) => el.className.includes("border-osc/70"));
+      return { ok: !!onScreen, centred: !!centred, lit, all };
     });
-    check("voice-focused project is on screen", sav.l >= -2 && sav.r <= sav.vw + 2 && sav.t < sav.vh && sav.b > 0, JSON.stringify(sav));
+    check("voice-focused project is centred on screen", sav.ok && sav.centred, JSON.stringify(sav.all));
+    check("voice-focused project is highlighted", sav.lit);
     await page.screenshot({ path: `${OUT}/${vp.name}-20-carousel-focus.png` });
 
     // Card layout: GitHub/LIVE buttons sit at the bottom right and never cover the big number.
     const layout = await page.evaluate(() => {
       const out = [];
-      for (const card of document.querySelectorAll("[data-testid^=build-project-]")) {
+      for (const card of document.querySelectorAll("article[data-testid^=build-project-]")) {
         const c = card.getBoundingClientRect();
         const num = card.querySelector("span[aria-hidden=true]").getBoundingClientRect();
         for (const a of card.querySelectorAll("a")) {
