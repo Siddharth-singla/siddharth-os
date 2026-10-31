@@ -20,12 +20,12 @@ function Card({ p, index, total, clone, focused }) {
       {/* project number: top-right, with space reserved so nothing sits on top of it */}
       <span
         aria-hidden="true"
-        className="pointer-events-none select-none absolute right-5 top-3 sm:right-7 font-display font-extrabold leading-none text-outline text-[clamp(3.5rem,6vw,5.25rem)] opacity-80"
+        className="pointer-events-none select-none absolute right-5 top-3 sm:right-7 font-display font-extrabold leading-none text-outline text-[2.9rem] sm:text-[clamp(3.5rem,6vw,5.25rem)] opacity-80"
       >
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <div className="flex flex-wrap items-center gap-2 pr-24 sm:pr-28">
+      <div className="flex flex-wrap items-center gap-2 pr-[5.5rem] sm:pr-36">
         <span className="font-monoos text-[10px] text-faint">{p.id}</span>
         <span className="border border-osc/40 bg-osc/10 px-2 py-0.5 font-monoos text-[9px] tracking-[0.2em] text-osc">{p.chapter}</span>
         {p.date && <span className="font-monoos text-[9px] tracking-[0.2em] text-faint">{p.date}</span>}

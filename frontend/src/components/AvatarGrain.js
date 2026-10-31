@@ -149,7 +149,12 @@ export default function AvatarGrain({ progress, booted }) {
   }
 
   return (
-    <div ref={wrapRef} className="relative h-full w-full" data-testid="hero-avatar">
+    <div
+      ref={wrapRef}
+      className="relative h-full w-full"
+      style={{ WebkitMaskImage: MASK, maskImage: MASK }}
+      data-testid="hero-avatar"
+    >
       <img
         ref={imgRef}
         src={avatarSrc}

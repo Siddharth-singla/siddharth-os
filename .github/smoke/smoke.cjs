@@ -144,6 +144,11 @@ const COMMANDS = [
         const num = card.querySelector("span[aria-hidden=true]").getBoundingClientRect();
         const links = [...card.querySelectorAll("a")];
         if (!links.length) continue;
+        // nothing in the header row may run under the big number
+        for (const el of card.querySelectorAll(":scope > div:first-of-type > span")) {
+          const r = el.getBoundingClientRect();
+          if (!(r.right <= num.left || r.bottom <= num.top || r.top >= num.bottom)) out.push(`${card.dataset.id}: "${el.textContent.trim().slice(0, 16)}" under number`);
+        }
         // the group of buttons must sit at the bottom right
         const g = links[0].parentElement.getBoundingClientRect();
         if (!(c.bottom - g.bottom < 60 && c.right - g.right < 60)) out.push(`${card.dataset.id}: buttons not bottom-right`);
@@ -186,12 +191,26 @@ const COMMANDS = [
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(1800);
     const hero = await page.evaluate(() => {
-      const t = document.querySelector("[data-testid=hero-title]").getBoundingClientRect();
+      // measure the actual letters (text ranges), not the heading box, which can be narrower than its text
+      const ink = (el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        return range.getBoundingClientRect();
+      };
+      const name = ink(document.querySelector("[data-testid=hero-title-name]"));
+      const os = ink(document.querySelector("[data-testid=hero-title-os]"));
+      const clip = document.querySelector("[data-testid=hero-title]").parentElement.getBoundingClientRect();
       const p = document.querySelector("[data-testid=hero-photo]").getBoundingClientRect();
-      return { tb: Math.round(t.bottom), tl: Math.round(t.left), tr: Math.round(t.right), pt: Math.round(p.top), pl: Math.round(p.left), pr: Math.round(p.right), vw: innerWidth };
+      return {
+        textL: Math.round(Math.min(name.left, os.left)), textR: Math.round(Math.max(name.right, os.right)),
+        textB: Math.round(Math.max(name.bottom, os.bottom)), clipL: Math.round(clip.left), clipR: Math.round(clip.right),
+        nameOsOverlap: !(name.right <= os.left + 1 || name.bottom <= os.top + 1),
+        pt: Math.round(p.top), pl: Math.round(p.left), pr: Math.round(p.right), vw: innerWidth,
+      };
     });
-    check("hero name above photo, no overlap", hero.tb <= hero.pt, JSON.stringify(hero));
-    check("hero name fits the screen", hero.tl >= 0 && hero.tr <= hero.vw, "");
+    check("hero name above photo, no overlap", hero.textB <= hero.pt, JSON.stringify(hero));
+    check("hero name not cut off", hero.textL >= hero.clipL - 1 && hero.textR <= hero.clipR + 1 && hero.textR <= hero.vw, `text ${hero.textL}-${hero.textR}, visible ${hero.clipL}-${hero.clipR}`);
+    check("SIDDHARTH and .OS don't collide", !hero.nameOsOverlap);
     const photoCentre = (hero.pl + hero.pr) / 2;
     check("hero photo centred", Math.abs(photoCentre - hero.vw / 2) < 24, `centre ${Math.round(photoCentre)} of ${hero.vw}`);
     await page.screenshot({ path: `${OUT}/${vp.name}-00-hero.png` });

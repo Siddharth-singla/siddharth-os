@@ -89,11 +89,13 @@ export default function Hero({ booted }) {
                 initial={{ y: "112%" }}
                 animate={booted ? { y: 0 } : {}}
                 transition={{ duration: 1, ease: EASE, delay: 0.1 }}
-                className="whitespace-nowrap font-display font-extrabold leading-[1.02] tracking-tight text-[clamp(1.9rem,8.2vw,8rem)]"
+                className="font-display font-extrabold leading-[1.02] tracking-tight text-[9.2vw] sm:whitespace-nowrap sm:text-[clamp(2rem,6.3vw,6.1rem)]"
                 data-testid="hero-title"
               >
-                <span className="text-ink">SIDDHARTH</span>
-                <span className="ml-[0.08em] text-osc" data-testid="hero-title-os">.OS</span>
+                {/* phones: two lines (the name, then .OS); wider screens: one line.
+                    Syne ExtraBold is about 12em wide for "SIDDHARTH.OS", so the sizes keep it inside the screen. */}
+                <span className="block sm:inline text-ink" data-testid="hero-title-name">SIDDHARTH</span>
+                <span className="block sm:inline sm:ml-[0.06em] text-osc" data-testid="hero-title-os">.OS</span>
               </motion.h1>
             </motion.div>
           </motion.div>
