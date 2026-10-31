@@ -214,6 +214,20 @@ const COMMANDS = [
     const photoCentre = (hero.pl + hero.pr) / 2;
     check("hero photo centred", Math.abs(photoCentre - hero.vw / 2) < 24, `centre ${Math.round(photoCentre)} of ${hero.vw}`);
     await page.screenshot({ path: `${OUT}/${vp.name}-00-hero.png` });
+    // where the first section slides over the hero: the two shades should differ
+    const shades = await page.evaluate(async () => {
+      const about = document.querySelector("[data-testid=hero-section]").nextElementSibling;
+      window.scrollTo(0, about.getBoundingClientRect().top + window.scrollY - innerHeight * 0.55);
+      await new Promise((r) => setTimeout(r, 900));
+      return {
+        hero: getComputedStyle(document.querySelector("[data-testid=hero-backdrop]")).backgroundImage.slice(0, 60),
+        sheet: getComputedStyle(about).backgroundColor,
+      };
+    });
+    check("hero shade differs from the next section", /gradient/.test(shades.hero) && /7, 8, 10/.test(shades.sheet), shades.sheet);
+    await page.screenshot({ path: `${OUT}/${vp.name}-00b-hero-to-next.png` });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
 
     const hiddenPending = await page.evaluate(() => document.body.innerText.includes("Not documented"));
     if (hiddenPending) failures++;

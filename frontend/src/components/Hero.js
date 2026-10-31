@@ -68,6 +68,19 @@ export default function Hero({ booted }) {
       className="relative min-h-screen flex items-start pt-16 overflow-hidden"
       data-testid="hero-section"
     >
+      {/* The hero sits on a slightly lighter slate, with a faint green glow behind the photo.
+          Every later section slides over it on the darker base colour (bg-void), so the change
+          of shade marks where a new section opens. Semi-transparent so the particles still show. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(34,197,94,0.08), transparent 70%), " +
+            "linear-gradient(to bottom, rgba(30,36,43,0.62), rgba(24,29,35,0.62))",
+        }}
+        data-testid="hero-backdrop"
+      />
       <motion.div style={{ y }} className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-16 sm:pt-16">
         <div className="flex flex-col items-center text-center">
           {/* 1. the name, on its own line above the photo; fades with scroll */}
