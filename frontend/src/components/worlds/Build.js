@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { TECHS, TECH_CHAINS, PROJECTS, FILTERS, EDUCATION, EXPERIENCE, CERTS, ARCHIVE_QUOTE, PENDING } from "../../data/content";
 
@@ -24,14 +24,42 @@ const POS = RINGS.flatMap(({ items, r, start }) =>
 );
 
 function ModuleCard({ p, i, total, reduced, coverRef, selfRef }) {
-  const { scrollYProgress: coverP } = useScroll(
-    // The card only dims once the next card has covered most of the screen,
-    // so a card you jump to (e.g. "tell me about savoury") arrives at full brightness.
-    coverRef ? { target: coverRef, offset: ["start 0.6", "start 0.15"] } : {}
-  );
+  // How far the next card has slid over this one (0 = not at all, 1 = fully).
+  // Measured from the next card's real position on screen: scroll-progress helpers
+  // mis-measure sticky elements and dimmed cards that nothing was covering.
+  const coverP = useMotionValue(0);
   const scale = useTransform(coverP, [0, 1], [1, 0.94]);
   const dim = useTransform(coverP, [0, 1], [1, 0.45]);
   const isLast = i === total - 1;
+
+  useEffect(() => {
+    if (!coverRef || reduced) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const el = coverRef.current;
+      const me = selfRef && selfRef.current;
+      if (!el || !me) return;
+      const next = el.getBoundingClientRect().top;
+      const mine = me.getBoundingClientRect();
+      // 0 while the next card is below this card's lower part; 1 once it reaches this card's top area.
+      const startY = mine.top + mine.height * 0.75;
+      const endY = mine.top + 40;
+      const v = Math.min(1, Math.max(0, (startY - next) / Math.max(1, startY - endY)));
+      coverP.set(v);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [coverRef, selfRef, reduced, coverP]);
 
   return (
     <div

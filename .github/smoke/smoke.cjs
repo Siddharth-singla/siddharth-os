@@ -82,6 +82,18 @@ const COMMANDS = [
 
     const clock = await page.textContent("[data-testid=play-match-clock]").catch(() => "?");
     report.push(`${vp.name} | match clock | ${clock}`);
+    // A project card you jump to must not be dimmed.
+    await page.fill("[data-testid=voice-dock-input]", "tell me about savoury");
+    await page.press("[data-testid=voice-dock-input]", "Enter");
+    await page.waitForTimeout(4200);
+    const cardOpacity = await page.evaluate(() => {
+      const el = document.querySelector("[data-testid=build-project-mod-07] > div");
+      return el ? Number(getComputedStyle(el).opacity) : -1;
+    });
+    const cardOk = cardOpacity > 0.95;
+    if (!cardOk) failures++;
+    report.push(`${vp.name} | jumped-to card at full brightness | ${cardOk ? "OK" : "FAIL"} (opacity ${cardOpacity})`);
+
     const hiddenPending = await page.evaluate(() => document.body.innerText.includes("Not documented"));
     if (hiddenPending) failures++;
     report.push(`${vp.name} | "Not documented" placeholders hidden | ${hiddenPending ? "FAIL" : "OK"}`);
@@ -104,7 +116,10 @@ const COMMANDS = [
       for (const el of document.querySelectorAll("body *")) {
         const r = el.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
-        if (getComputedStyle(el).position === "fixed" && r.left >= 0 && r.right <= vw + 1) continue;
+        const cs = getComputedStyle(el);
+        if (cs.position === "fixed" && r.left >= 0 && r.right <= vw + 1) continue;
+        // decorative fixed layers (e.g. film grain) are oversized on purpose and can't be scrolled to
+        if (cs.position === "fixed" && el.getAttribute("aria-hidden") === "true") continue;
         if (r.right > vw + 2 && !clipped(el)) wide.push(`${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}(${Math.round(r.right)}px)`);
         if (wide.length > 5) break;
       }
